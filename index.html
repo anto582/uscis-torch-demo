@@ -588,9 +588,12 @@
   }
   function clearArch(){const d=archDiag();d.classList.remove('sel');d.querySelectorAll('.hot').forEach(x=>x.classList.remove('hot'));
     document.getElementById('arch-info').innerHTML=INFO.default;}
-  function archEnter(id){if(!archPin)setArch(id);}
-  function archLeave(){if(!archPin)clearArch();}
-  function archClick(id,e){e.stopPropagation();archPin=(archPin===id?null:id);archPin?setArch(id):clearArch();}
+  function archEnter(id){if(archStep>=ARCH_MAX && !archPin)setArch(id);}
+  function archLeave(){if(archStep>=ARCH_MAX && !archPin)clearArch();}
+  function archClick(id,e){
+    if(archStep<ARCH_MAX) return;          // still drawing: let the click bubble → advances a step
+    e.stopPropagation();archPin=(archPin===id?null:id);archPin?setArch(id):clearArch();
+  }
   let archStep=0; const ARCH_MAX=8;
   function renderArch(step){
     archStep=Math.max(0,Math.min(ARCH_MAX,step));
