@@ -262,7 +262,14 @@
   .ctab:hover{filter:brightness(1.25)}
   .ctab.on{background:rgba(56,189,248,.16);color:var(--ours);border-color:transparent}
   .code-sub{margin-left:auto;font-family:var(--sans);font-size:11px;color:#8C99AE}
+  .code-pane{max-height:48vh;overflow:auto;padding:clamp(12px,1.6vw,20px) clamp(14px,1.8vw,24px)}
   .code-pane[hidden]{display:none}
+  .cref-head{font-family:var(--mono);font-size:clamp(10px,1.1vw,12.5px);color:#5C6A82;padding:0 0 10px}
+  .cref{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:baseline;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+  .cref:last-child{border-bottom:0}
+  .cref-sig{font-family:var(--mono);font-size:clamp(11px,1.2vw,13.5px);white-space:pre;overflow-x:auto;color:#C9D4E3}
+  .cref-lines{font-family:var(--mono);font-size:clamp(9.5px,1vw,12px);color:#8C99AE;background:rgba(255,255,255,.07);border-radius:6px;padding:2px 8px;white-space:nowrap}
+  .cref-desc{grid-column:1/-1;font-size:clamp(10.5px,1.15vw,13px);color:#8C99AE;line-height:1.42}
 
   /* nav + theme toggle */
   .nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:1000}
@@ -496,83 +503,38 @@
       <button class="ctab" data-k="accounts" onclick="showCode('accounts')">accounts.py</button>
     </div>
     <div class="code-wrap seq">
-      <div class="code-bar"><span class="tl" style="background:#FF5F56"></span><span class="tl" style="background:#FFBD2E"></span><span class="tl" style="background:#27C93F"></span><span class="fname" id="code-fname">uscis_client.py</span><span class="code-sub" id="code-sub">OAuth2 client-credentials → USCIS</span></div>
-<pre class="code-pane" id="code-uscis"><span class="c-var">CLIENT_ID</span>, <span class="c-var">CLIENT_SECRET</span> = os.getenv(<span class="c-str">'USCIS_CLIENT_ID'</span>), os.getenv(<span class="c-str">'USCIS_CLIENT_SECRET'</span>)  <span class="c-com"># .env</span>
-
-<span class="c-kw">def</span> <span class="c-fn">get_access_token</span>(force_refresh=<span class="c-kw">False</span>):
-    <span class="c-kw">if</span> <span class="c-kw">not</span> CLIENT_ID <span class="c-kw">or</span> <span class="c-kw">not</span> CLIENT_SECRET:
-        <span class="c-kw">raise</span> <span class="c-fn">RuntimeError</span>(<span class="c-str">'USCIS_CLIENT_ID / SECRET must be set in .env'</span>)   <span class="c-com"># fail-closed</span>
-    cached = <span class="c-fn">load_token</span>()                          <span class="c-com"># token cached in DB (~30 min)</span>
-    <span class="c-kw">if</span> cached <span class="c-kw">and</span> <span class="c-kw">not</span> force_refresh <span class="c-kw">and</span> <span class="c-kw">not</span> <span class="c-fn">_expired</span>(cached):
-        <span class="c-kw">return</span> cached[<span class="c-str">'access_token'</span>]
-    basic = base64.<span class="c-fn">b64encode</span>(<span class="c-str">f'{CLIENT_ID}:{CLIENT_SECRET}'</span>.encode()).decode()
-    r = httpx.<span class="c-fn">post</span>(OAUTH_URL, data={<span class="c-str">'grant_type'</span>: <span class="c-str">'client_credentials'</span>},
-                   headers={<span class="c-str">'Authorization'</span>: <span class="c-str">f'Basic {basic}'</span>})   <span class="c-com"># client-credentials</span>
-    token = r.<span class="c-fn">json</span>()[<span class="c-str">'access_token'</span>]; <span class="c-fn">save_token</span>(token, expiry)
-    <span class="c-fn">log_oauth</span>(token_preview=<span class="c-fn">_mask_token</span>(token))   <span class="c-com"># masked · secret &amp; full token never stored</span>
-    <span class="c-kw">return</span> token
-
-<span class="c-kw">def</span> <span class="c-fn">lookup_case</span>(receipt):
-    r = httpx.<span class="c-fn">get</span>(<span class="c-str">f'{API_BASE}/{receipt}'</span>, headers={<span class="c-str">'Authorization'</span>: <span class="c-str">f'Bearer {get_access_token()}'</span>})
-    <span class="c-kw">if</span> r.status_code == <span class="c-var">401</span>:                  <span class="c-com"># expired → refresh + retry once</span>
-        r = httpx.<span class="c-fn">get</span>(..., headers={<span class="c-str">'Authorization'</span>: <span class="c-str">f'Bearer {get_access_token(force_refresh=True)}'</span>})
-    <span class="c-kw">return</span> r.status_code, r.<span class="c-fn">json</span>()              <span class="c-com"># paced &lt;= TPS · audited in `requests`</span>
-</pre>
-<pre class="code-pane" id="code-internal" hidden><span class="c-kw">import</span> hmac, os
-<span class="c-kw">from</span> fastapi <span class="c-kw">import</span> Header, HTTPException
-
-INTERNAL_API_KEY = os.getenv(<span class="c-str">'INTERNAL_API_KEY'</span>, <span class="c-str">''</span>)        <span class="c-com"># .env (== TP_INTERNAL_API_KEY)</span>
-
-<span class="c-kw">def</span> <span class="c-fn">require_internal_key</span>(x_internal_key: str = <span class="c-fn">Header</span>(default=<span class="c-str">''</span>, alias=<span class="c-str">'X-Internal-Key'</span>)):
-    <span class="c-com"># trackpetition → apiofficial. Every server-to-server call carries X-Internal-Key.</span>
-    <span class="c-kw">if</span> <span class="c-kw">not</span> INTERNAL_API_KEY <span class="c-kw">or</span> <span class="c-fn">len</span>(INTERNAL_API_KEY) &lt; <span class="c-var">16</span>:
-        <span class="c-kw">raise</span> <span class="c-fn">HTTPException</span>(<span class="c-var">503</span>, <span class="c-str">'Internal channel not configured'</span>)   <span class="c-com"># fail-closed</span>
-    <span class="c-kw">if</span> <span class="c-kw">not</span> hmac.<span class="c-fn">compare_digest</span>(x_internal_key <span class="c-kw">or</span> <span class="c-str">''</span>, INTERNAL_API_KEY):
-        <span class="c-kw">raise</span> <span class="c-fn">HTTPException</span>(<span class="c-var">401</span>, <span class="c-str">'Invalid or missing internal key'</span>)   <span class="c-com"># constant-time compare</span>
-</pre>
-<pre class="code-pane" id="code-auth" hidden><span class="c-kw">import</span> jwt
-<span class="c-kw">from</span> google.oauth2 <span class="c-kw">import</span> id_token
-
-SECRET_KEY = os.getenv(<span class="c-str">'SECRET_KEY'</span>, <span class="c-str">''</span>)                  <span class="c-com"># HS256 key (.env)</span>
-<span class="c-kw">if</span> SECRET_KEY <span class="c-kw">in</span> _DEFAULT_SECRETS <span class="c-kw">or</span> <span class="c-fn">len</span>(SECRET_KEY) &lt; <span class="c-var">16</span>:
-    <span class="c-kw">raise</span> <span class="c-fn">RuntimeError</span>(<span class="c-str">'SECRET_KEY missing/weak — refuse to boot'</span>)   <span class="c-com"># fail-closed</span>
-
-<span class="c-kw">def</span> <span class="c-fn">verify_google_credential</span>(credential):              <span class="c-com"># Google Sign-In (frontend)</span>
-    info = id_token.<span class="c-fn">verify_oauth2_token</span>(credential, <span class="c-fn">Request</span>(), GOOGLE_CLIENT_ID)
-    <span class="c-kw">return</span> {<span class="c-str">'email'</span>: info[<span class="c-str">'email'</span>].lower()}
-
-<span class="c-kw">def</span> <span class="c-fn">make_token</span>(email):                              <span class="c-com"># issue our own HS256 JWT (12 h)</span>
-    payload = {<span class="c-str">'sub'</span>: email, <span class="c-str">'is_admin'</span>: <span class="c-fn">is_admin</span>(email), <span class="c-str">'exp'</span>: <span class="c-fn">now</span>()+TTL}
-    <span class="c-kw">return</span> jwt.<span class="c-fn">encode</span>(payload, SECRET_KEY, algorithm=<span class="c-str">'HS256'</span>)
-
-<span class="c-kw">def</span> <span class="c-fn">require_authenticated</span>(creds = <span class="c-fn">Depends</span>(bearer)):     <span class="c-com"># Authorization: Bearer &lt;jwt&gt;</span>
-    payload = <span class="c-fn">decode_token</span>(creds.credentials)
-    <span class="c-kw">if</span> <span class="c-kw">not</span> <span class="c-fn">is_operator</span>(payload[<span class="c-str">'sub'</span>]):              <span class="c-com"># re-checked on EVERY request</span>
-        <span class="c-kw">raise</span> <span class="c-fn">HTTPException</span>(<span class="c-var">403</span>, <span class="c-str">'Not an authorized operator'</span>)
-    <span class="c-kw">return</span> payload
-</pre>
-<pre class="code-pane" id="code-accounts" hidden>JWT_SECRET = os.environ.<span class="c-fn">get</span>(<span class="c-str">'TP_JWT_SECRET'</span>, <span class="c-str">''</span>).encode()        <span class="c-com"># .env</span>
-<span class="c-kw">if</span> <span class="c-fn">len</span>(JWT_SECRET) &lt; <span class="c-var">16</span>:
-    <span class="c-kw">raise</span> <span class="c-fn">RuntimeError</span>(<span class="c-str">'TP_JWT_SECRET missing/too short'</span>)          <span class="c-com"># fail-closed</span>
-
-INTERNAL_API_KEY = os.environ.<span class="c-fn">get</span>(<span class="c-str">'TP_INTERNAL_API_KEY'</span>, <span class="c-str">''</span>)      <span class="c-com"># == apiofficial</span>
-HEADERS = {<span class="c-str">'X-Internal-Key'</span>: INTERNAL_API_KEY}                <span class="c-com"># sent on every /api/internal/*</span>
-
-<span class="c-kw">def</span> <span class="c-fn">sign_jwt</span>(payload):                                    <span class="c-com"># HS256 · HMAC-SHA256</span>
-    header = <span class="c-fn">_b64u</span>(<span class="c-str">b'{"alg":"HS256","typ":"JWT"}'</span>)
-    body   = <span class="c-fn">_b64u</span>(json.<span class="c-fn">dumps</span>(payload).encode())
-    sig    = <span class="c-fn">_b64u</span>(hmac.<span class="c-fn">new</span>(JWT_SECRET, <span class="c-str">f'{header}.{body}'</span>.encode(), hashlib.sha256).digest())
-    <span class="c-kw">return</span> <span class="c-str">f'{header}.{body}.{sig}'</span>
-
-<span class="c-kw">def</span> <span class="c-fn">verify_jwt</span>(token):
-    header, body, sig = token.<span class="c-fn">split</span>(<span class="c-str">'.'</span>)
-    expected = <span class="c-fn">_b64u</span>(hmac.<span class="c-fn">new</span>(JWT_SECRET, <span class="c-str">f'{header}.{body}'</span>.encode(), hashlib.sha256).digest())
-    <span class="c-kw">if</span> <span class="c-kw">not</span> hmac.<span class="c-fn">compare_digest</span>(sig, expected):                <span class="c-com"># constant-time</span>
-        <span class="c-kw">raise</span> <span class="c-fn">Unauthorized</span>()
-    <span class="c-kw">return</span> json.<span class="c-fn">loads</span>(<span class="c-fn">_b64u_dec</span>(body))
-</pre>
+      <div class="code-bar"><span class="tl" style="background:#FF5F56"></span><span class="tl" style="background:#FFBD2E"></span><span class="tl" style="background:#27C93F"></span><span class="fname" id="code-fname">uscis_client.py</span><span class="code-sub" id="code-sub">454 lines · OAuth2 → USCIS</span></div>
+      <div class="code-pane" id="code-uscis">
+        <div class="cref-head">454 lines · open in VS Code for the full file. Entry points:</div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">get_access_token</span>(force_refresh=<span class="c-kw">False</span>, trigger=<span class="c-str">'auto'</span>):</code><span class="cref-lines">L80–182</span><div class="cref-desc">OAuth2 client-credentials: <span class="c-str">Basic</span> base64(id:secret) → access_token; cached in DB (~30 min) + proactive refresh; masked logs · secret &amp; full token never stored.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">lookup_case</span>(receipt, source=<span class="c-str">'user'</span>, skip_tps_gate=<span class="c-kw">False</span>):</code><span class="cref-lines">L323–453</span><div class="cref-desc">The Case Status call: <span class="c-str">Authorization: Bearer</span>; on 401 → refresh + retry once; TPS gate; RFC 9457 errors surfaced verbatim; audited in <span class="mono-em">requests</span>.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_tps_budget_available</span>(tps_cap):</code><span class="cref-lines">L195–218</span><div class="cref-desc">Atomic sliding-window TPS limiter (5/s sandbox · 10/s prod) — held by the single executor.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_mask_token</span>(tok):</code><span class="cref-lines">L76–77</span><div class="cref-desc">Masks the token to a short preview for the audit log; the full token is never persisted.</div></div>
+      </div>
+      <div class="code-pane" id="code-internal" hidden>
+        <div class="cref-head">27 lines · the entire module. Entry points:</div>
+        <div class="cref"><code class="cref-sig">INTERNAL_API_KEY = os.getenv(<span class="c-str">'INTERNAL_API_KEY'</span>, <span class="c-str">''</span>)</code><span class="cref-lines">L18</span><div class="cref-desc">Shared secret from .env — identical to trackpetition's <span class="mono-em">TP_INTERNAL_API_KEY</span>.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">require_internal_key</span>(x_internal_key=<span class="c-fn">Header</span>(alias=<span class="c-str">'X-Internal-Key'</span>)):</code><span class="cref-lines">L21–26</span><div class="cref-desc">trackpetition → apiofficial gate. <span class="mono-em">hmac.compare_digest</span> (constant-time); 503 if unset (fail-closed) · 401 on mismatch.</div></div>
+      </div>
+      <div class="code-pane" id="code-auth" hidden>
+        <div class="cref-head">145 lines · operator-console auth (Google + HS256 JWT). Entry points:</div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">if</span> <span class="c-fn">len</span>(SECRET_KEY) &lt; <span class="c-var">16</span>: <span class="c-kw">raise</span> <span class="c-fn">RuntimeError</span>(…)</code><span class="cref-lines">L40–44</span><div class="cref-desc">Fail-closed boot — refuses to start on a missing / weak JWT secret.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">verify_google_credential</span>(credential):</code><span class="cref-lines">L49–64</span><div class="cref-desc">Verifies the Google ID token (google-auth) + email_verified; returns the user's email.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">make_token</span>(email, name=<span class="c-kw">None</span>, picture=<span class="c-kw">None</span>):</code><span class="cref-lines">L103–112</span><div class="cref-desc">Issues our own HS256 JWT (<span class="mono-em">SECRET_KEY</span>, 12 h TTL).</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">require_authenticated</span>(creds=<span class="c-fn">Depends</span>(bearer)):</code><span class="cref-lines">L124–134</span><div class="cref-desc"><span class="c-str">Bearer</span> JWT; authorization re-checked against the live allow-list on EVERY request.</div></div>
+      </div>
+      <div class="code-pane" id="code-accounts" hidden>
+        <div class="cref-head">auth &amp; crypto section · ~L47–322 of a 2046-line server file. Entry points:</div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_internal_headers</span>():</code><span class="cref-lines">L77–82</span><div class="cref-desc">Sends <span class="mono-em">X-Internal-Key: INTERNAL_API_KEY</span> on every server→server call to apiofficial.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">hash_password</span>(password, salt=<span class="c-kw">None</span>):</code><span class="cref-lines">L158–162</span><div class="cref-desc">PBKDF2-HMAC-SHA256 · 200,000 iterations · random 16-byte salt.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">verify_password</span>(password, salt_hex, hash_hex):</code><span class="cref-lines">L165–169</span><div class="cref-desc"><span class="mono-em">hmac.compare_digest</span> (constant-time) of the derived key.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">make_token</span>(user_id, email):</code><span class="cref-lines">L180–190</span><div class="cref-desc">HS256 JWT — hand-rolled <span class="mono-em">hmac.new(JWT_SECRET, …, sha256)</span> (<span class="mono-em">TP_JWT_SECRET</span>).</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">verify_token</span>(token):</code><span class="cref-lines">L193–204</span><div class="cref-desc">Verifies the signature (constant-time) + expiry.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">current_user</span>(authorization=<span class="c-fn">Header</span>()):</code><span class="cref-lines">L642–654</span><div class="cref-desc"><span class="c-str">Bearer</span> dependency → validated user row from the DB.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">require_admin</span>(user=<span class="c-fn">Depends</span>(current_user)):</code><span class="cref-lines">L666–671</span><div class="cref-desc"><span class="mono-em">TP_ADMIN_EMAILS</span> allow-list gate (403 otherwise).</div></div>
+      </div>
     </div>
-    <p class="code-foot seq">Shown live in the console <b>“Live wire”</b> + opened in the editor. Keys live in <b>.env</b> (systemd EnvironmentFile); secrets &amp; full tokens are never stored or logged.</p>
+    <p class="code-foot seq">The <b>real, full code</b> is shown live in VS Code during the demo — these are the entry points + line numbers to jump to. Keys live in <b>.env</b> (systemd EnvironmentFile); secrets &amp; full tokens are never stored or logged.</p>
   </section>
 
   <!-- S6 · SECURITY -->
@@ -665,7 +627,7 @@ HEADERS = {<span class="c-str">'X-Internal-Key'</span>: INTERNAL_API_KEY}       
     document.querySelectorAll('.code-pane').forEach(p=>{p.hidden=(p.id!=='code-'+key);});
     document.querySelectorAll('.ctab').forEach(t=>t.classList.toggle('on',t.dataset.k===key));
     const names={uscis:'uscis_client.py',internal:'internal_auth.py',auth:'auth.py',accounts:'accounts.py'};
-    const subs={uscis:'OAuth2 client-credentials → USCIS',internal:'X-Internal-Key · server→server',auth:'Google Sign-In + HS256 JWT (console)',accounts:'trackpetition JWT + X-Internal-Key'};
+    const subs={uscis:'454 lines · OAuth2 → USCIS',internal:'27 lines · X-Internal-Key',auth:'145 lines · Google + HS256 JWT',accounts:'auth section · L47–322 (of 2046)'};
     const fn=document.getElementById('code-fname'); if(fn)fn.textContent=names[key]||'';
     const cs=document.getElementById('code-sub'); if(cs)cs.textContent=subs[key]||'';
   }
