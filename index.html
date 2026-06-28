@@ -16,12 +16,19 @@
     --shadow:rgba(255,255,255,.6);
   }
   body.light{
-    --bg:#F5F7FB; --surface:#FFFFFF; --surface-2:#EDF1F7;
-    --border:rgba(15,22,32,.12); --text:#101722; --muted:#586273;
-    --title-grad:linear-gradient(120deg,#101722 30%,#0284C7);
-    --soft:rgba(0,0,0,.05); --soft-2:rgba(0,0,0,.035); --hair:rgba(0,0,0,.08);
-    --shadow:rgba(0,0,0,.32);
+    --bg:#E7ECF3; --surface:#FFFFFF; --surface-2:#F3F6FB;
+    --border:rgba(15,22,32,.12); --text:#0F1620; --muted:#566273;
+    --title-grad:linear-gradient(120deg,#0F1620 30%,#0284C7);
+    --soft:rgba(15,22,32,.05); --soft-2:rgba(15,22,32,.035); --hair:rgba(15,22,32,.09);
+    --shadow:rgba(15,22,32,.26);
+    background:
+      radial-gradient(1100px 560px at 82% -12%, rgba(56,189,248,.18), transparent 60%),
+      radial-gradient(900px 520px at -5% 112%, rgba(129,140,248,.15), transparent 62%),
+      var(--bg);
   }
+  body.light .card,body.light .layer,body.light .job,body.light .fnode,body.light .dnode,body.light .code-wrap,body.light .bframe{
+    box-shadow:0 1px 2px rgba(15,22,32,.05),0 14px 32px -18px rgba(15,22,32,.30)}
+  body.light .badge,body.light .toc span{background:#fff;box-shadow:0 1px 2px rgba(15,22,32,.05)}
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
   body{
@@ -88,9 +95,9 @@
   .edges{position:absolute;inset:0;z-index:1;overflow:visible}
   .edges path{fill:none;stroke-width:2.4;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .55s ease,opacity .3s ease,stroke-width .2s ease}
   .edges path.e-ext{stroke-width:3.4}
-  .diagram.drawn .edges path{stroke-dashoffset:0}
+  .edges path.drawn{stroke-dashoffset:0}
   .elabel{font-family:var(--mono);font-size:13px;fill:var(--muted);opacity:0;transition:opacity .35s ease;paint-order:stroke;stroke:var(--bg);stroke-width:4px;dominant-baseline:middle}
-  .diagram.drawn .elabel{opacity:.66}
+  .elabel.shown{opacity:.66}
   .dnode{position:absolute;transform:translate(-50%,-50%);background:linear-gradient(180deg,var(--surface),var(--surface-2));
     border:1px solid var(--border);border-radius:12px;padding:11px 16px;cursor:pointer;z-index:2;white-space:nowrap;opacity:0;
     transition:opacity .4s ease,border-color .22s ease,box-shadow .22s ease}
@@ -114,6 +121,7 @@
   .arch-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(10px,1.4vw,18px);margin-top:2px}
   .arch-legend span{display:inline-flex;align-items:center;gap:7px;font-size:clamp(9.5px,1.05vw,12px);color:var(--muted)}
   .arch-legend i{width:18px;height:3px;border-radius:2px;display:inline-block}
+  .arch-hint{font-family:var(--mono);font-size:clamp(9px,1vw,11.5px);color:var(--muted);text-align:center;opacity:.6;margin-top:6px;transition:opacity .3s ease}
 
   /* Flow */
   .flow{display:flex;align-items:stretch;justify-content:center;width:100%;flex-wrap:nowrap}
@@ -328,6 +336,7 @@
         <span><i style="background:var(--steel)"></i>SQL</span>
         <span><i style="background:var(--uscis)"></i>cross-DB SELECT</span>
       </div>
+      <div class="arch-hint" id="arch-hint">click / → to draw each link · ↻ reset</div>
     </div>
   </section>
 
@@ -582,16 +591,25 @@
   function archEnter(id){if(!archPin)setArch(id);}
   function archLeave(){if(!archPin)clearArch();}
   function archClick(id,e){e.stopPropagation();archPin=(archPin===id?null:id);archPin?setArch(id):clearArch();}
+  let archStep=0; const ARCH_MAX=8;
+  function renderArch(step){
+    archStep=Math.max(0,Math.min(ARCH_MAX,step));
+    const d=archDiag();
+    ARCH_ORDER.forEach((id,i)=>{
+      const p=d.querySelector('path[data-edge="'+id+'"]');
+      const l=d.querySelector('text[data-elabel="'+id+'"]');
+      const on=i<archStep;
+      if(p)p.classList.toggle('drawn',on);
+      if(l)l.classList.toggle('shown',on);
+    });
+    const h=document.getElementById('arch-hint'); if(h)h.style.opacity=archStep>=ARCH_MAX?0:.6;
+  }
   function runArch(){
-    const d=archDiag(); archPin=null;
-    d.classList.remove('shown','drawn','sel');
+    const d=archDiag(); archPin=null; archStep=0;
+    d.classList.remove('sel');
     d.querySelectorAll('.hot').forEach(x=>x.classList.remove('hot'));
     document.getElementById('arch-info').innerHTML=INFO.default;
-    requestAnimationFrame(()=>{
-      layoutArch(); void d.offsetWidth; d.classList.add('shown');
-      ARCH_ORDER.forEach((id,i)=>{const p=d.querySelector('path[data-edge="'+id+'"]');if(p)p.style.transitionDelay=(i*80)+'ms';});
-      setTimeout(()=>d.classList.add('drawn'),300);
-    });
+    requestAnimationFrame(()=>{ layoutArch(); renderArch(0); d.classList.add('shown'); });
   }
 
   function restart(slide){slide.querySelectorAll('.seq,.stagger>*').forEach(el=>{el.style.animation='none';void el.offsetWidth;el.style.animation='';});}
@@ -609,8 +627,14 @@
     if(active.id==='s-arch') timers.push(setTimeout(runArch,100));
     try{localStorage.setItem('uscis-deck-pos',cur);}catch(e){}
   }
-  function next(){const a=slides[cur-1];if(a.id==='s-flow'&&flowStep<FLOW_MAX){renderFlow(flowStep+1);return;}show(cur+1);}
-  function prev(){const a=slides[cur-1];if(a.id==='s-flow'&&flowStep>0){renderFlow(flowStep-1);return;}show(cur-1);}
+  function next(){const a=slides[cur-1];
+    if(a.id==='s-flow'&&flowStep<FLOW_MAX){renderFlow(flowStep+1);return;}
+    if(a.id==='s-arch'&&archStep<ARCH_MAX){renderArch(archStep+1);return;}
+    show(cur+1);}
+  function prev(){const a=slides[cur-1];
+    if(a.id==='s-flow'&&flowStep>0){renderFlow(flowStep-1);return;}
+    if(a.id==='s-arch'&&archStep>0){renderArch(archStep-1);return;}
+    show(cur-1);}
 
   document.addEventListener('keydown',e=>{
     if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
@@ -618,7 +642,7 @@
     if(e.key==='Home'){show(1);} if(e.key==='End'){show(tot);}
   });
   document.addEventListener('click',e=>{
-    if(e.target.closest('.nav')||e.target.closest('.replay')||e.target.closest('.diagram')||e.target.closest('.theme-toggle'))return;
+    if(e.target.closest('.nav')||e.target.closest('.replay')||e.target.closest('.theme-toggle'))return;
     next();
   });
   window.addEventListener('resize',()=>{if(slides[cur-1]&&slides[cur-1].id==='s-arch')layoutArch();});
