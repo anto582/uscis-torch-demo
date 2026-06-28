@@ -38,7 +38,7 @@
   .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
     padding:clamp(30px,4.4vw,68px);opacity:0;visibility:hidden;transform:scale(.992);transition:opacity .42s ease,transform .42s ease}
   .slide.active{opacity:1;visibility:visible;transform:none}
-  .slide.appendix::before{content:"SOPORTE · referencia";position:absolute;top:clamp(20px,2.6vw,40px);left:clamp(28px,4.4vw,68px);font-size:10px;letter-spacing:.16em;color:var(--muted);opacity:.5;font-family:var(--mono)}
+  .slide.appendix::before{content:"SUPPORT · reference";position:absolute;top:clamp(20px,2.6vw,40px);left:clamp(28px,4.4vw,68px);font-size:10px;letter-spacing:.16em;color:var(--muted);opacity:.5;font-family:var(--mono)}
 
   .kicker{font-size:clamp(11px,1.3vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
     font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
@@ -235,8 +235,8 @@
   .dots .d.ap{filter:brightness(.9);opacity:.7} .dots .d.ap.on{background:var(--muted);opacity:1}
   .counter{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;margin-left:4px}
   .hint{position:fixed;bottom:24px;right:22px;color:var(--muted);font-size:11px;z-index:1000;opacity:.55}
-  .theme-toggle{position:fixed;bottom:20px;left:22px;z-index:1000;width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--soft);color:var(--text);cursor:pointer;font-size:15px;transition:.2s}
-  .theme-toggle:hover{filter:brightness(1.3)}
+  .theme-toggle{position:fixed;bottom:20px;left:22px;z-index:1000;height:36px;padding:0 15px;border-radius:999px;border:1px solid var(--border);background:var(--soft);color:var(--text);cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:.2s}
+  .theme-toggle:hover{filter:brightness(1.35);border-color:var(--ours)}
   @media(max-width:768px){.usage,.two-col,.batch{grid-template-columns:1fr}.agenda{grid-auto-flow:row;grid-template-rows:none}
     .flow{flex-wrap:wrap}.conn{flex-basis:100%;flex-direction:row;height:22px}.conn svg{width:60px}}
 </style>
@@ -272,7 +272,7 @@
   <section class="slide" data-label="Run-sheet · agenda">
     <div class="slide-head"><div class="kicker seq">USCIS Torch Demo · run-sheet</div><h2 class="head seq">30-minute live demo — agenda</h2></div>
     <div class="agenda seq stagger">
-      <div class="ag"><span class="agn">1</span><div><div class="req">App usage</div><div class="live">What it does / who uses it.</div></div><span class="agt">~1m</span></div>
+      <div class="ag"><span class="agn">1</span><div><div class="req">Architecture</div><div class="live">System map — one server, three tiers; the only USCIS caller.</div></div><span class="agt">~2m</span></div>
       <div class="ag"><span class="agn">2</span><div><div class="req">Frontend live · trackpetition.com</div><div class="live">Set up an alert · check a case → <b>200</b> in the UI.</div></div><span class="agt">~5m</span></div>
       <div class="ag"><span class="agn">3</span><div><div class="req">Network tab</div><div class="live">Same-origin <b>/api/case</b> (web-app requirement).</div></div><span class="agt">~2m</span></div>
       <div class="ag"><span class="agn">4</span><div><div class="req">Backend console · api.startup58.com</div><div class="live">OAuth <b>Active</b> (client_id masked) · TPS/quota · audit.</div></div><span class="agt">~4m</span></div>
@@ -287,7 +287,7 @@
   </section>
 
   <!-- 3 · ARCHITECTURE (interactive) -->
-  <section class="slide" id="s-arch" data-label="Arquitectura">
+  <section class="slide" id="s-arch" data-label="Architecture">
     <button class="replay" onclick="runArch()">↻ Trace path</button>
     <div class="slide-head"><div class="kicker seq">System Map · optional</div><h2 class="head seq">One server, three tiers, two databases</h2></div>
     <div class="arch2">
@@ -332,20 +332,20 @@
   </section>
 
   <!-- 4 · DIVIDER -->
-  <section class="slide" data-label="◆ Material de soporte">
+  <section class="slide" data-label="◆ Support material">
     <div class="divider-wrap">
-      <div class="eyebrow seq">Fin de la presentación · inicia el soporte</div>
-      <h1 class="title seq">Material de soporte</h1>
-      <p class="sub seq">Referencia técnica para responder preguntas de USCIS — se salta salvo que pregunten. Ordenado según el demo en vivo.</p>
+      <div class="eyebrow seq">End of presentation · support material begins</div>
+      <h1 class="title seq">Support material</h1>
+      <p class="sub seq">Technical reference to answer USCIS questions — skipped unless asked. Ordered to follow the live demo.</p>
       <div class="toc seq">
-        <span>1 · Flujo</span><span>2 · Consola</span><span>3 · Auth</span><span>4 · OAuth</span><span>5 · Código</span><span>6 · Seguridad</span><span>7 · Batch</span>
+        <span>1 · Flow</span><span>2 · Console</span><span>3 · Auth</span><span>4 · OAuth</span><span>5 · Code</span><span>6 · Security</span><span>7 · Batch</span>
       </div>
     </div>
   </section>
 
   <!-- S1 · REQUEST FLOW (click-stepped) -->
-  <section class="slide appendix" id="s-flow" data-label="Soporte · Flujo">
-    <button class="replay" onclick="renderFlow(0)">↻ Reiniciar</button>
+  <section class="slide appendix" id="s-flow" data-label="Support · Flow">
+    <button class="replay" onclick="renderFlow(0)">↻ Reset</button>
     <div class="slide-head"><div class="kicker seq">Request Flow · click to step</div><h2 class="head seq">One case lookup, end to end</h2></div>
     <div class="flow">
       <div class="fstep" data-c="browser"><div class="fnode"><span class="num">①</span><h4>Browser</h4><div class="meta">no token · no secret</div><code>GET /api/case/{receipt}</code></div></div>
@@ -361,7 +361,7 @@
   </section>
 
   <!-- S2 · LIVE CONSOLE (backend screenshot) -->
-  <section class="slide appendix" data-label="Soporte · Consola">
+  <section class="slide appendix" data-label="Support · Console">
     <div class="slide-head"><div class="kicker seq">Backend · live console</div><h2 class="head seq">api.startup58.com — the console USCIS reviews</h2></div>
     <div class="console seq">
       <div class="bframe">
@@ -379,7 +379,7 @@
   </section>
 
   <!-- S3 · AUTH -->
-  <section class="slide appendix" data-label="Soporte · Auth">
+  <section class="slide appendix" data-label="Support · Auth">
     <div class="slide-head"><div class="kicker seq">Authentication · modules</div><h2 class="head seq">Four auth channels, four modules</h2></div>
     <div class="layers seq stagger">
       <div class="layer l1"><div class="route">① → ②</div><div class="desc"><b>Browser → trackpetition.com.</b> <span class="mono-em">accounts.py</span> — HS256 JWT (HMAC-SHA256, <span class="mono-em">TP_JWT_SECRET</span>) for <span class="mono-em">/account</span>; <span class="mono-em">/check</span> public; salted password hashing + Turnstile.</div><div class="pill">JWT</div></div>
@@ -390,7 +390,7 @@
   </section>
 
   <!-- S4 · OAUTH -->
-  <section class="slide appendix" data-label="Soporte · OAuth">
+  <section class="slide appendix" data-label="Support · OAuth">
     <div class="slide-head"><div class="kicker seq">OAuth 2.0</div><h2 class="head seq">Token lifecycle &amp; secret protection</h2></div>
     <div class="two-col seq stagger">
       <div class="panel card">
@@ -414,7 +414,7 @@
   </section>
 
   <!-- S5 · CODE -->
-  <section class="slide appendix" data-label="Soporte · Código">
+  <section class="slide appendix" data-label="Support · Code">
     <div class="slide-head"><div class="kicker seq">Implementation · shown live</div><h2 class="head seq">Env-sourced creds, masked logs</h2></div>
     <div class="code-wrap seq">
       <div class="code-bar"><span class="tl" style="background:#FF5F56"></span><span class="tl" style="background:#FFBD2E"></span><span class="tl" style="background:#27C93F"></span><span class="fname">uscis_client.py</span></div>
@@ -437,7 +437,7 @@
   </section>
 
   <!-- S6 · SECURITY -->
-  <section class="slide appendix" data-label="Soporte · Seguridad">
+  <section class="slide appendix" data-label="Support · Security">
     <div class="slide-head"><div class="kicker seq">Server security</div><h2 class="head seq">Secrets in .env · encryption · MySQL 8</h2></div>
     <div class="two-col seq stagger">
       <div class="panel card">
@@ -460,7 +460,7 @@
   </section>
 
   <!-- S7 · BATCH -->
-  <section class="slide appendix" data-label="Soporte · Batch">
+  <section class="slide appendix" data-label="Support · Batch">
     <div class="slide-head"><div class="kicker seq">Backend · Batch updates</div><h2 class="head seq">Scheduled jobs &amp; how we run them live</h2></div>
     <div class="batch seq stagger">
       <div class="sched">
@@ -486,8 +486,8 @@
   <button onclick="next()" aria-label="next">→</button>
   <span class="counter"><span id="cur">1</span>/<span id="tot">11</span></span>
 </div>
-<button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Tema claro / oscuro">☀</button>
-<div class="hint">← → · Espacio · click · puntos</div>
+<button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light / dark theme">☀ Light</button>
+<div class="hint">← → · Space · click · dots</div>
 
 <script>
   const slides=[...document.querySelectorAll('.slide')];
@@ -502,7 +502,7 @@
 
   /* theme */
   function applyTheme(t){document.body.classList.toggle('light',t==='light');
-    document.getElementById('themeBtn').textContent=t==='light'?'☾':'☀';
+    document.getElementById('themeBtn').textContent=t==='light'?'☾ Dark':'☀ Light';
     if(slides[cur-1]&&slides[cur-1].id==='s-arch')setTimeout(layoutArch,0);
     try{localStorage.setItem('uscis-deck-theme',t);}catch(e){}}
   function toggleTheme(){applyTheme(document.body.classList.contains('light')?'dark':'light');}
