@@ -96,6 +96,7 @@
   .edges path{fill:none;stroke-width:2.4;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .55s ease,opacity .3s ease,stroke-width .2s ease}
   .edges path.e-ext{stroke-width:3.4}
   .edges path.drawn{stroke-dashoffset:0}
+  .edges .pkt{pointer-events:none}
   .elabel{font-family:var(--mono);font-size:13px;fill:var(--muted);opacity:0;transition:opacity .35s ease;paint-order:stroke;stroke:var(--bg);stroke-width:4px;dominant-baseline:middle}
   .elabel.shown{opacity:.66}
   .dnode{position:absolute;transform:translate(-50%,-50%);background:linear-gradient(180deg,var(--surface),var(--surface-2));
@@ -204,15 +205,28 @@
   .demo-do b{color:var(--text)}
 
   /* Agenda (column-major: 1-4 left, 5-8 right) */
-  .agenda{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:clamp(7px,1vw,12px) clamp(20px,2.6vw,40px);width:100%}
-  .ag{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:clamp(7px,.95vw,11px) 0;border-bottom:1px solid var(--hair)}
-  .ag .agn{width:26px;height:26px;border-radius:50%;background:rgba(56,189,248,.14);color:var(--ours);font-weight:800;font-size:13px;display:grid;place-items:center}
-  .ag .req{font-size:clamp(12px,1.3vw,15px);font-weight:700;color:var(--text)}
-  .ag .live{font-size:clamp(10.5px,1.15vw,13px);color:var(--muted);margin-top:2px;line-height:1.35}
-  .ag .live b{color:var(--ours);font-weight:600}
-  .ag .agt{font-family:var(--mono);font-size:clamp(9.5px,1vw,12px);color:var(--muted);white-space:nowrap}
-  .ag.hot-err .agn{background:rgba(248,113,113,.16);color:var(--danger)}
-  .ag.hot-err .live b{color:var(--danger)}
+  .agenda{display:flex;flex-direction:column;gap:6px;width:100%}
+  .ag{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .ag-head{width:100%;display:grid;grid-template-columns:auto 1fr auto auto;gap:clamp(10px,1.4vw,16px);align-items:center;background:none;border:0;cursor:pointer;color:var(--text);padding:clamp(9px,1.05vw,13px) clamp(13px,1.6vw,18px);text-align:left;font:inherit}
+  .ag-head:hover{background:var(--soft-2)}
+  .agn{width:26px;height:26px;border-radius:50%;background:rgba(56,189,248,.14);color:var(--ours);font-weight:800;font-size:13px;display:grid;place-items:center}
+  .ag.err .agn{background:rgba(248,113,113,.16);color:var(--danger)}
+  .ag.done .agn{background:rgba(52,211,153,.2);color:var(--oauth);font-size:0}
+  .ag.done .agn::after{content:"✓";font-size:14px}
+  .ag-req{font-size:clamp(12px,1.35vw,15.5px);font-weight:700}
+  .agt{font-family:var(--mono);font-size:clamp(9.5px,1vw,12px);color:var(--muted);white-space:nowrap}
+  .ag-chev{color:var(--muted);transition:transform .25s ease;font-size:12px}
+  .ag.open .ag-chev{transform:rotate(90deg)}
+  .ag-detail{max-height:0;overflow:hidden;transition:max-height .32s ease}
+  .ag.open .ag-detail{max-height:230px}
+  .ag-detail .what{padding:2px clamp(16px,2vw,24px) 8px clamp(48px,5vw,58px);font-size:clamp(11px,1.2vw,14px);color:var(--muted);line-height:1.45}
+  .ag-detail .what b{color:var(--text)}
+  .ag-actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center;padding:0 clamp(16px,2vw,24px) clamp(12px,1.5vw,16px) clamp(48px,5vw,58px)}
+  .ag-btn{font-size:clamp(11px,1.2vw,13.5px);font-weight:600;padding:7px 13px;border-radius:8px;cursor:pointer;border:1px solid var(--border);text-decoration:none;display:inline-flex;align-items:center;gap:6px;color:var(--text);background:var(--soft)}
+  .ag-btn:hover{filter:brightness(1.25)}
+  .ag-btn.open{background:var(--ours);color:#06121c;border-color:transparent}
+  .ag-btn.done{margin-left:auto;background:var(--soft-2)}
+  .ag.done .ag-btn.done{background:rgba(52,211,153,.16);color:var(--oauth);border-color:transparent}
   .comp-strip{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(8px,1.3vw,16px);margin-top:clamp(12px,1.8vw,20px)}
   .comp-strip span{font-size:clamp(10px,1.15vw,13px);color:var(--muted);display:inline-flex;align-items:center;gap:7px}
   .comp-strip span::before{content:"✓";color:var(--oauth);font-weight:800}
@@ -279,15 +293,47 @@
   <!-- 2 · RUN-SHEET / 30-MIN AGENDA -->
   <section class="slide" data-label="Run-sheet · agenda">
     <div class="slide-head"><div class="kicker seq">USCIS Torch Demo · run-sheet</div><h2 class="head seq">30-minute live demo — agenda</h2></div>
-    <div class="agenda seq stagger">
-      <div class="ag"><span class="agn">1</span><div><div class="req">Architecture</div><div class="live">System map — one server, three tiers; the only USCIS caller.</div></div><span class="agt">~2m</span></div>
-      <div class="ag"><span class="agn">2</span><div><div class="req">Frontend live · trackpetition.com</div><div class="live">Set up an alert · check a case → <b>200</b> in the UI.</div></div><span class="agt">~5m</span></div>
-      <div class="ag"><span class="agn">3</span><div><div class="req">Network tab</div><div class="live">Same-origin <b>/api/case</b> (web-app requirement).</div></div><span class="agt">~2m</span></div>
-      <div class="ag"><span class="agn">4</span><div><div class="req">Backend console · api.startup58.com</div><div class="live">OAuth <b>Active</b> (client_id masked) · TPS/quota · audit.</div></div><span class="agt">~4m</span></div>
-      <div class="ag"><span class="agn">5</span><div><div class="req">OAuth + code</div><div class="live">Keys in <b>.env</b> · masked logs · token handling (Live wire).</div></div><span class="agt">~4m</span></div>
-      <div class="ag hot-err"><span class="agn">6</span><div><div class="req">Simulate errors</div><div class="live">Error generator → <b>404 · 422 · 429</b> + handling in UI.</div></div><span class="agt">~4m</span></div>
-      <div class="ag"><span class="agn">7</span><div><div class="req">Batch · run manually</div><div class="live">Run orchestrator now · cadence <b>hourly / daily</b>.</div></div><span class="agt">~3m</span></div>
-      <div class="ag"><span class="agn">8</span><div><div class="req">Questions</div><div class="live">Reserve time for USCIS follow-up.</div></div><span class="agt">~5m</span></div>
+    <div class="agenda seq" id="agenda">
+      <div class="ag" data-step="1">
+        <button class="ag-head" onclick="toggleStep(1)"><span class="agn">1</span><span class="ag-req">Architecture</span><span class="agt">~2m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="what">Walk the system map: one server, three tiers; <b>EXECUTOR is the only USCIS caller</b>. Keep it short — diagrams are optional for USCIS.</div>
+          <div class="ag-actions"><button class="ag-btn" onclick="go('Architecture')">▸ Show diagram</button><button class="ag-btn done" onclick="markDone(1,event)">✓ Done</button></div></div>
+      </div>
+      <div class="ag" data-step="2">
+        <button class="ag-head" onclick="toggleStep(2)"><span class="agn">2</span><span class="ag-req">Frontend live · trackpetition.com</span><span class="agt">~5m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="what">Open the site, <b>set up an alert</b>, then check a real receipt → show the <b>200</b> case status in the UI.</div>
+          <div class="ag-actions"><a class="ag-btn open" href="https://trackpetition.com" target="_blank" rel="noopener">Open trackpetition.com ↗</a><button class="ag-btn done" onclick="markDone(2,event)">✓ Done</button></div></div>
+      </div>
+      <div class="ag" data-step="3">
+        <button class="ag-head" onclick="toggleStep(3)"><span class="agn">3</span><span class="ag-req">Network tab</span><span class="agt">~2m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="what">In the browser <b>DevTools → Network</b>, show requests hit our same-origin <b>/api/case</b> — never the USCIS endpoint directly.</div>
+          <div class="ag-actions"><a class="ag-btn open" href="https://trackpetition.com" target="_blank" rel="noopener">Open trackpetition.com ↗</a><button class="ag-btn done" onclick="markDone(3,event)">✓ Done</button></div></div>
+      </div>
+      <div class="ag" data-step="4">
+        <button class="ag-head" onclick="toggleStep(4)"><span class="agn">4</span><span class="ag-req">Backend console · api.startup58.com</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="what">Open the Live Console. Show OAuth <b>Active</b> (client_id masked), <b>TPS / quota</b>, Recent requests <b>audit</b>, and the Live wire JSON.</div>
+          <div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(4,event)">✓ Done</button></div></div>
+      </div>
+      <div class="ag" data-step="5">
+        <button class="ag-head" onclick="toggleStep(5)"><span class="agn">5</span><span class="ag-req">OAuth + code</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="what">On the console show the <b>Live wire</b> (real token POST, masked). Then show <b>uscis_client.py</b>: env creds, masked logs, the Bearer call.</div>
+          <div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn" onclick="go('Support · Code')">▸ Show code</button><button class="ag-btn done" onclick="markDone(5,event)">✓ Done</button></div></div>
+      </div>
+      <div class="ag err" data-step="6">
+        <button class="ag-head" onclick="toggleStep(6)"><span class="agn">6</span><span class="ag-req">Simulate errors</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="what">Use the console <b>Error generator</b> → trigger <b>404 · 422 · 429</b> and show the handling/display in the UI (success AND error).</div>
+          <div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(6,event)">✓ Done</button></div></div>
+      </div>
+      <div class="ag" data-step="7">
+        <button class="ag-head" onclick="toggleStep(7)"><span class="agn">7</span><span class="ag-req">Batch · run manually</span><span class="agt">~3m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="what">Run the <b>Batch / orchestrator manually</b> from the console. Explain cadence: <b>priority hourly · others daily</b>; notifier every 2 min.</div>
+          <div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(7,event)">✓ Done</button></div></div>
+      </div>
+      <div class="ag" data-step="8">
+        <button class="ag-head" onclick="toggleStep(8)"><span class="agn">8</span><span class="ag-req">Questions</span><span class="agt">~5m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="what">Reserve time for USCIS follow-up. (No AI bots / notetakers in the Teams call.)</div>
+          <div class="ag-actions"><button class="ag-btn done" onclick="markDone(8,event)">✓ Done</button></div></div>
+      </div>
     </div>
     <div class="comp-strip seq">
       <span>Live only · no mock data</span><span>No AI bots in Teams</span><span>No caching</span><span>Data in USA · Ashburn VA</span>
@@ -296,7 +342,7 @@
 
   <!-- 3 · ARCHITECTURE (interactive) -->
   <section class="slide" id="s-arch" data-label="Architecture">
-    <button class="replay" onclick="runArch()">↻ Trace path</button>
+    <button class="replay" onclick="resetArch()">↻ Replay / draw manually</button>
     <div class="slide-head"><div class="kicker seq">System Map · optional</div><h2 class="head seq">One server, three tiers, two databases</h2></div>
     <div class="arch2">
       <div class="diagram" id="arch-diagram">
@@ -508,6 +554,9 @@
     b.onclick=(e)=>{e.stopPropagation();show(i+1);};dotsEl.appendChild(b);});
   const dots=[...dotsEl.children];
   function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+  function toggleStep(n){document.querySelectorAll('#agenda .ag').forEach(a=>a.classList.toggle('open',+a.dataset.step===n?!a.classList.contains('open'):false));}
+  function go(label){const i=slides.findIndex(s=>s.dataset.label===label);if(i>=0)show(i+1);}
+  function markDone(n,e){if(e)e.stopPropagation();const a=document.querySelector('#agenda .ag[data-step="'+n+'"]');if(a)a.classList.toggle('done');}
 
   /* theme */
   function applyTheme(t){document.body.classList.toggle('light',t==='light');
@@ -588,31 +637,58 @@
   }
   function clearArch(){const d=archDiag();d.classList.remove('sel');d.querySelectorAll('.hot').forEach(x=>x.classList.remove('hot'));
     document.getElementById('arch-info').innerHTML=INFO.default;}
-  function archEnter(id){if(archStep>=ARCH_MAX && !archPin)setArch(id);}
-  function archLeave(){if(archStep>=ARCH_MAX && !archPin)clearArch();}
+  function archEnter(id){if(archStep>=ARCH_MAX && !archAuto && !archPin)setArch(id);}
+  function archLeave(){if(archStep>=ARCH_MAX && !archAuto && !archPin)clearArch();}
   function archClick(id,e){
-    if(archStep<ARCH_MAX) return;          // still drawing: let the click bubble → advances a step
+    if(archStep<ARCH_MAX || archAuto) return;   // still drawing: let the click bubble → advances a step
     e.stopPropagation();archPin=(archPin===id?null:id);archPin?setArch(id):clearArch();
   }
-  let archStep=0; const ARCH_MAX=8;
-  function renderArch(step){
+  let archStep=0, archAuto=false, archTimers=[]; const ARCH_MAX=8;
+  function clearArchTimers(){archTimers.forEach(clearTimeout);archTimers=[];}
+  function archHint(){const h=document.getElementById('arch-hint');if(h)h.style.opacity=archStep>=ARCH_MAX?0:.6;}
+  function travelDot(p){
+    const svg=p.ownerSVGElement; if(!svg) return;
+    const len=p.getTotalLength(); if(!len) return;
+    const stroke=getComputedStyle(p).stroke||'#fff';
+    const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('r','5'); dot.setAttribute('class','pkt'); dot.setAttribute('fill',stroke);
+    dot.style.color=stroke; dot.style.filter='drop-shadow(0 0 6px currentColor)';
+    svg.appendChild(dot);
+    const t0=performance.now(), dur=440;
+    function f(now){const k=Math.min(1,(now-t0)/dur);const pt=p.getPointAtLength(k*len);
+      dot.setAttribute('cx',pt.x.toFixed(1));dot.setAttribute('cy',pt.y.toFixed(1));
+      if(k<1)requestAnimationFrame(f);else dot.remove();}
+    requestAnimationFrame(f);
+  }
+  function renderArch(step){            // set state without the travelling dot (PDF / step-back)
     archStep=Math.max(0,Math.min(ARCH_MAX,step));
     const d=archDiag();
-    ARCH_ORDER.forEach((id,i)=>{
-      const p=d.querySelector('path[data-edge="'+id+'"]');
-      const l=d.querySelector('text[data-elabel="'+id+'"]');
-      const on=i<archStep;
-      if(p)p.classList.toggle('drawn',on);
-      if(l)l.classList.toggle('shown',on);
-    });
-    const h=document.getElementById('arch-hint'); if(h)h.style.opacity=archStep>=ARCH_MAX?0:.6;
+    ARCH_ORDER.forEach((id,i)=>{const p=d.querySelector('path[data-edge="'+id+'"]');const l=d.querySelector('text[data-elabel="'+id+'"]');const on=i<archStep;
+      if(p)p.classList.toggle('drawn',on); if(l)l.classList.toggle('shown',on);});
+    archHint();
   }
-  function runArch(){
-    const d=archDiag(); archPin=null; archStep=0;
-    d.classList.remove('sel');
-    d.querySelectorAll('.hot').forEach(x=>x.classList.remove('hot'));
+  function stepArch(){                   // draw the NEXT link with a travelling dot
+    if(archStep>=ARCH_MAX) return false;
+    const id=ARCH_ORDER[archStep]; const d=archDiag();
+    const p=d.querySelector('path[data-edge="'+id+'"]'); const l=d.querySelector('text[data-elabel="'+id+'"]');
+    if(p){p.classList.add('drawn'); travelDot(p);} if(l)l.classList.add('shown');
+    archStep++; archHint(); return true;
+  }
+  function autoPlayArch(){
+    archAuto=true; renderArch(0);
+    let i=0; const tick=()=>{ if(i<ARCH_MAX){ stepArch(); i++; archTimers.push(setTimeout(tick,470)); } else { archAuto=false; archHint(); } };
+    archTimers.push(setTimeout(tick,520));
+  }
+  function resetArch(){
+    clearArchTimers(); archAuto=false; archPin=null;
+    const d=archDiag(); d.classList.remove('sel'); d.querySelectorAll('.hot').forEach(x=>x.classList.remove('hot'));
+    document.getElementById('arch-info').innerHTML=INFO.default; renderArch(0);
+  }
+  function runArch(){                    // slide entry → auto-play once
+    const d=archDiag(); archPin=null; clearArchTimers();
+    d.classList.remove('sel'); d.querySelectorAll('.hot').forEach(x=>x.classList.remove('hot'));
     document.getElementById('arch-info').innerHTML=INFO.default;
-    requestAnimationFrame(()=>{ layoutArch(); renderArch(0); d.classList.add('shown'); });
+    requestAnimationFrame(()=>{ layoutArch(); renderArch(0); d.classList.add('shown'); autoPlayArch(); });
   }
 
   function restart(slide){slide.querySelectorAll('.seq,.stagger>*').forEach(el=>{el.style.animation='none';void el.offsetWidth;el.style.animation='';});}
@@ -625,18 +701,18 @@
     restart(active);
     document.getElementById('cur').textContent=cur;
     document.getElementById('bar').style.width=(cur/tot*100)+'%';
-    clearTimers();
+    clearTimers(); clearArchTimers();
     if(active.id==='s-flow') renderFlow(0);
     if(active.id==='s-arch') timers.push(setTimeout(runArch,100));
     try{localStorage.setItem('uscis-deck-pos',cur);}catch(e){}
   }
   function next(){const a=slides[cur-1];
     if(a.id==='s-flow'&&flowStep<FLOW_MAX){renderFlow(flowStep+1);return;}
-    if(a.id==='s-arch'&&archStep<ARCH_MAX){renderArch(archStep+1);return;}
+    if(a.id==='s-arch'){ if(archAuto){clearArchTimers();archAuto=false;renderArch(ARCH_MAX);return;} if(archStep<ARCH_MAX){stepArch();return;} }
     show(cur+1);}
   function prev(){const a=slides[cur-1];
     if(a.id==='s-flow'&&flowStep>0){renderFlow(flowStep-1);return;}
-    if(a.id==='s-arch'&&archStep>0){renderArch(archStep-1);return;}
+    if(a.id==='s-arch'&&!archAuto&&archStep>0){renderArch(archStep-1);return;}
     show(cur-1);}
 
   document.addEventListener('keydown',e=>{
@@ -645,7 +721,7 @@
     if(e.key==='Home'){show(1);} if(e.key==='End'){show(tot);}
   });
   document.addEventListener('click',e=>{
-    if(e.target.closest('.nav')||e.target.closest('.replay')||e.target.closest('.theme-toggle'))return;
+    if(e.target.closest('.nav')||e.target.closest('.replay')||e.target.closest('.theme-toggle')||e.target.closest('.agenda'))return;
     next();
   });
   window.addEventListener('resize',()=>{if(slides[cur-1]&&slides[cur-1].id==='s-arch')layoutArch();});
