@@ -377,6 +377,7 @@
 
   <!-- 3 · ARCHITECTURE (interactive) -->
   <section class="slide" id="s-arch" data-label="Architecture">
+    <button class="replay" style="left:clamp(28px,4vw,72px);right:auto" onclick="go('Run-sheet · agenda')">← Agenda</button>
     <button class="replay" onclick="resetArch()">↻ Replay / draw manually</button>
     <div class="slide-head"><div class="kicker seq">System Map · optional</div><h2 class="head seq">One server, three tiers, two databases</h2></div>
     <div class="arch2">
@@ -652,36 +653,34 @@
 
   /* ---------- presenter view (private speaker notes) ---------- */
   const NOTES=[
-    "<p class=cue>Opener · ~30 sec · slide only, then go live</p>"+
-    "<p>“Thanks for your time — I'll keep the intro short. This is <b>TrackPetition</b>, a USCIS case-status monitoring service. It checks a petitioner's status against the official <b>USCIS Case Status API</b> and <b>notifies them in near real-time</b> — by WhatsApp, email or Telegram — the moment a status changes.</p>"+
-    "<p>It's used by immigration applicants and their legal and paralegal staff who are tracking pending petitions. Every check is a <b>live USCIS API call</b> — we don't cache and we don't use mock data. Let me show you, live.”</p>",
-    "<p class=cue>Transition · this slide is your control panel</p>"+
-    "<p>“Here's the plan for the next thirty minutes: a quick architecture overview, then everything live — the frontend, a real case lookup, the browser's Network tab, our backend console, the OAuth and code, simulating error responses, and a batch job run manually. I'll leave time at the end for your questions.”</p>"+
-    "<p class=note>Cockpit: expand a step, use the <b>Open …</b> buttons to launch the live pages, tick <b>✓ Done</b> as you go.</p>",
-    "<p class=cue>Architecture · press ↻ then click to draw each link while you talk</p>"+
-    "<p>“At a high level it's a <b>single server in Ashburn, Virginia</b>, with three tiers and two MySQL 8 databases. Let me trace the path. A user's browser only ever talks to <b>our own site</b>, over HTTPS. Our trackpetition backend proxies that request, server-side, to our executor — api.startup58.</p>"+
-    "<p>And here's the key point: the <b>executor is the only component that ever calls USCIS</b>, over OAuth2. So the browser never touches USCIS directly, and the OAuth secret never leaves the server. The two databases hold our app data, and the USCIS case data plus a full audit log.”</p>",
-    "<p class=cue>Divider</p><p>“That's the overview — now let me show you the real thing.”</p><p class=note>Everything after this is reference — jump back here only if USCIS asks a specific question.</p>",
-    "<p class=cue>Request flow · click to step ①→②→③→◆</p>"+
-    "<p>“Here's one case lookup, end to end — and I'll show this live in a moment. ① The browser sends a GET to our same-origin <span class=k>/api/case</span> — no token, no secret. ② Our backend validates it and forwards it to the executor with a shared internal key. ③ The executor adds the OAuth Bearer token and calls USCIS. On success we return the case status; on an error like a 404 or 422 we pass the USCIS message back <b>verbatim</b>.</p>"+
-    "<p>The point for your review: in the browser's Network tab you'll only ever see our <span class=k>/api/case</span> — <b>never</b> the USCIS endpoint. That's deliberate, so the OAuth secret stays server-side.”</p>",
-    "<p class=cue>Backend console · screen-share api.startup58.com live</p>"+
-    "<p>“This is our backend operations console — the same one we use to run the API. You can see the OAuth token is <b>Active</b>, with the client_id masked. Here's the live <b>TPS</b> counter and the <b>daily quota</b> — those caps are enforced in real time. Down here is the <b>Recent Requests audit</b> — every call, with its status. And this <b>Live wire</b> panel shows the actual token response from USCIS in real time, with the secret never displayed.”</p>",
-    "<p class=cue>Authentication · four layers</p>"+
-    "<p>“Authentication happens at <b>four independent layers</b>, each in its own module. Browser to our API: a signed <b>JWT</b>. Between our two backends: a shared <b>X-Internal-Key</b>, server-to-server only. Executor to USCIS: <b>OAuth 2.0</b> Bearer. And our operator console: <b>Google Sign-In plus our own JWT</b>. I'll show you the code for these next.”</p>",
-    "<p class=cue>OAuth 2.0 · token lifecycle</p>"+
-    "<p>“For OAuth specifically: we POST our client credentials to the USCIS token endpoint, get an access token good for about thirty minutes, cache it, and send it as a <b>Bearer</b> token on every case call. If we ever get a 401 we refresh and retry once, automatically. The Client ID and Secret live <b>only in environment variables</b> on the server — never in code, never in the browser, and they're masked in every log line.”</p>",
-    "<p class=cue>Code · open each tab; click a line to jump in VS Code</p>"+
-    "<p><b>uscis_client.py — OAuth.</b> “This is our USCIS client. We read the Client ID and Secret from environment variables — line 80 — base64-encode them as Basic auth, and POST to the USCIS token endpoint. We cache the token in the database for about thirty minutes and refresh it proactively, so no live request ever pays for the handshake. Every case lookup, line 323, sends <b>Authorization: Bearer</b>; if we get a 401 we refresh and retry once. Before each call we check our local <b>TPS budget</b>, line 195, so we never exceed the rate cap. And notice the client_id is masked and the full token is never logged.”</p>"+
-    "<p><b>internal_auth.py — internal channel.</b> “trackpetition never calls USCIS directly — it calls our executor with a shared <b>X-Internal-Key</b>, which we compare in <b>constant time</b> with hmac.compare_digest, line 21. A missing key returns 503, a wrong key returns 401.”</p>"+
-    "<p><b>auth.py — console.</b> “We verify the Google ID token, then issue our own <b>HS256 JWT</b>, line 103, and we re-check authorization on <b>every</b> request — line 124 — not just at login. The app refuses to even start if the JWT secret is weak.”</p>"+
-    "<p><b>accounts.py — our own users.</b> “Passwords are hashed with <b>PBKDF2-HMAC-SHA256 at 200,000 iterations</b>, line 158; sessions are HS256 JWTs verified in constant time, line 193.”</p>"+
-    "<p><b>Closing line:</b> “The common thread: every secret lives only in the server's environment file, logs are masked, comparisons are constant-time, and the app fails closed.”</p>",
+    "<p class=cue>Opener · ~30 sec, then go live</p>"+
+    "<p>“Thank you for your time. I will keep this short. This is <b>TrackPetition</b>. It checks a case status on the official <b>USCIS Case Status API</b>, and it tells the user <b>very quickly when the status changes</b> — by WhatsApp, email, or Telegram. It is used by applicants and their lawyers. <b>Every check is a real, live call to USCIS</b> — we do not save old results, and we do not use fake data. Let me show you.”</p>",
+    "<p class=cue>Transition · this slide is my plan</p>"+
+    "<p>“Here is the plan for the next thirty minutes. First, a quick look at the architecture. Then I go live: the website, a real case check, the browser Network tab, our backend console, the OAuth and the code, some error examples, and a batch job that I run by hand. At the end I leave time for your questions.”</p>"+
+    "<p class=note>Click a step to open the live pages.</p>",
+    "<p class=cue>Press ↻, then click to draw each line while you talk</p>"+
+    "<p>“At a high level: <b>one server in Ashburn, Virginia</b>, three layers, and two databases. Let me follow the path. The user's browser only talks to <b>our own website</b>. Our backend then talks to our worker — api.startup58. And this is the key point: <b>only the worker calls USCIS</b>, using OAuth2. So the browser never talks to USCIS, and the secret key never leaves the server.”</p>",
+    "<p class=cue>Divider</p><p>“That is the overview. Now let me show you the real thing.”</p><p class=note>Everything after this is extra detail — open it only if USCIS asks.</p>",
+    "<p class=cue>Click to step ①→②→③→◆</p>"+
+    "<p>“This is one case check, step by step. ① The browser calls <b>our own address</b>, <span class=k>/api/case</span> — no token, no secret. ② Our backend checks it and sends it to the worker with a private key. ③ The worker adds the OAuth token and calls USCIS. If it works, we return the status. If there is an error, like 404 or 422, we show <b>the same message USCIS sends</b>.</p>"+
+    "<p>Important: in the Network tab you will only see our <span class=k>/api/case</span> — <b>never</b> the USCIS address. We do this on purpose, so the secret stays on the server.”</p>",
+    "<p class=cue>Share api.startup58.com live</p>"+
+    "<p>“This is our backend console — the same tool we use to run the API. The OAuth token is <b>Active</b>, and the client id is hidden. Here is the live rate counter and the daily limit. Here is the <b>list of recent calls</b> — each call with its result. And this panel shows the <b>real token answer</b> from USCIS, live, with the secret never shown.”</p>",
+    "<p class=cue>Four login layers</p>"+
+    "<p>“We use <b>four separate login checks</b>, each in its own file. Browser to our API: a signed token (JWT). Between our two servers: a shared private key. Worker to USCIS: <b>OAuth 2.0</b>. And our admin page: Google sign-in plus our own token. I will show the code next.”</p>",
+    "<p class=cue>OAuth steps</p>"+
+    "<p>“For OAuth: we send our client id and secret to the USCIS token address, we get a token that lasts about thirty minutes, we save it, and we send it on every call. If a call returns 401, we get a new token and try once more. The id and secret are kept <b>only in a file on the server</b> — never in the code, never in the browser — and they are hidden in the logs.”</p>",
+    "<p class=cue>Open each tab; click a line to open it in VS Code</p>"+
+    "<p><b>uscis_client.py — OAuth.</b> “This file talks to USCIS. We read the id and secret from the server file — line 80 — and use them to get a token. We save the token for about thirty minutes, so each call is fast. Every case call sends the token as <b>Bearer</b> — line 323. If we get a 401, we get a new token and try again once. Before each call we check our rate limit — line 195 — so we never go over. The id is hidden, and the full token is never written to the logs.”</p>"+
+    "<p><b>internal_auth.py — internal key.</b> “Our website never calls USCIS directly. It calls our worker with a <b>shared private key</b>, and we compare it in a safe way — line 21. No key gives 503; a wrong key gives 401.”</p>"+
+    "<p><b>auth.py — admin page.</b> “We check the Google sign-in, then we make our own token — line 103 — and we check the user again on <b>every</b> request — line 124. The app will <b>not start</b> if the secret is weak.”</p>"+
+    "<p><b>accounts.py — our users.</b> “Passwords are hashed in a strong way — PBKDF2, 200,000 rounds — line 158. Sessions use a token we check in a safe way — line 193.”</p>"+
+    "<p><b>Last line:</b> “Same idea everywhere: secrets only in the server file, logs hide them, all checks are safe, and the app stops if something is wrong.”</p>",
     "<p class=cue>Security summary</p>"+
-    "<p>“To summarize the security posture: all secrets live in a <b>systemd-protected .env file</b> — never committed, never public. The app <b>fails closed</b> if any key is missing or weak. Traffic is encrypted <b>in transit</b> — Cloudflare Full-Strict TLS — and <b>at rest</b> in MySQL 8. Everything except nginx is bound to localhost, and MySQL 8 uses caching_sha2 with a FIPS handshake.”</p>",
-    "<p class=cue>Batch · run the orchestrator manually now</p>"+
-    "<p>“Finally, our scheduled jobs. An <b>orchestrator</b> refreshes case statuses on a schedule — <b>priority cases hourly, all others daily</b> — and a <b>notifier</b> checks every two minutes to alert users on a status change. I'll <b>run the orchestrator manually</b> right now, so you can see a real batch run, including how it handles both <b>success and error</b> responses.”</p>"+
-    "<p class=note>Then: “That covers everything — happy to take your questions.”</p>"
+    "<p>“Quick summary of security. All secrets are in a <b>protected file on the server</b> — never shared, never public. The app <b>does not start</b> if a key is missing or weak. Traffic is encrypted on the way (TLS) and <b>also when stored</b> (MySQL 8). Only the web server is public; everything else stays private on the machine.”</p>",
+    "<p class=cue>Run the batch by hand now</p>"+
+    "<p>“Last, our scheduled jobs. One job updates case statuses on a schedule — <b>important cases every hour, the rest every day</b>. Another job checks every two minutes and alerts the user when something changes. I will <b>run the main job by hand now</b>, so you can see a real run, with a good answer and an error answer.”</p>"+
+    "<p class=note>Then: “That is everything. I am happy to take your questions.”</p>"
   ];
   function renderNotes(pos){
     pos=Math.max(1,Math.min(tot,pos||1)); renderNotes._last=pos;
