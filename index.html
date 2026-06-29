@@ -879,8 +879,7 @@
       next();
     });
     window.addEventListener('resize',()=>{if(slides[cur-1]&&slides[cur-1].id==='s-arch')layoutArch();});
-    let start=1; try{const v=+localStorage.getItem('uscis-deck-pos');if(v>=1&&v<=tot)start=v;}catch(e){}
-    show(start);
+    show(1);   // always start at the home slide (no resume)
   }
 </script>
 </body>
