@@ -275,6 +275,20 @@
   .vsc{color:#82AAFF;text-decoration:none;cursor:pointer}
   .vsc:hover{text-decoration:underline}
 
+  /* presenter notes view (separate URL: …/#notes) */
+  #notesView{display:none;position:fixed;inset:0;flex-direction:column;padding:clamp(20px,3vw,34px) clamp(24px,4vw,40px) 52px;background:var(--bg);color:var(--text);overflow:auto;z-index:2000}
+  body.notes-mode #notesView{display:flex}
+  body.notes-mode .deck,body.notes-mode .nav,body.notes-mode .menu-wrap,body.notes-mode .theme-toggle,body.notes-mode .progress{display:none!important}
+  .nv-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:6px}
+  #notesView h1{font-size:clamp(22px,2.7vw,32px);color:var(--ours);margin:4px 0 16px;line-height:1.15}
+  #nv-notes p{margin:0 0 13px;font-size:clamp(14px,1.55vw,19px);line-height:1.55}
+  #nv-notes p.cue{font-family:var(--mono);font-size:clamp(11px,1.2vw,13px);color:var(--internal);margin-bottom:4px;letter-spacing:.04em}
+  #nv-notes p.note{color:var(--muted);font-size:clamp(12px,1.3vw,15px)}
+  #nv-notes b{color:var(--text);font-weight:700}
+  #nv-notes .k{font-family:var(--mono);color:var(--oauth)}
+  .nv-next{margin-top:auto;padding-top:14px;border-top:1px solid var(--border);font-size:14px;color:var(--muted)}
+  .nv-hint{margin-top:10px;font-size:12px;color:var(--muted);opacity:.7;line-height:1.4}
+
   /* nav + theme toggle */
   .nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:1000}
   .nav button{background:var(--soft);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:16px;transition:.2s}
@@ -596,7 +610,6 @@
   <button class="menu-btn" id="menuBtn" onclick="toggleMenu(event)">≡ Demo menu</button>
   <div class="menu-pop" id="menuPop">
     <div class="menu-grp">Navigate</div>
-    <button onclick="openPresenter();closeMenu()">🎤 Presenter view (private notes)</button>
     <button onclick="go('Run-sheet · agenda');closeMenu()">🏠 Back to agenda</button>
     <button onclick="go('◆ Support material');closeMenu()">📑 Support material</button>
     <div class="menu-grp">Open live pages</div>
@@ -609,6 +622,14 @@
     <button class="mono" onclick="showCode('accounts');closeMenu()">accounts.py</button>
     <div class="menu-grp" style="opacity:.7;font-family:var(--mono);text-transform:none;letter-spacing:0">← → · Space · click · dots</div>
   </div>
+</div>
+
+<div id="notesView">
+  <div class="nv-top"><span id="nv-counter"></span><span>Presenter notes · PRIVATE — do not share this window</span></div>
+  <h1 id="nv-title"></h1>
+  <div id="nv-notes"></div>
+  <div class="nv-next" id="nv-next"></div>
+  <div class="nv-hint">This view lives at a separate URL (…/#notes) and follows the deck automatically. In Teams, share only the deck window — never this one.</div>
 </div>
 
 <script>
@@ -639,41 +660,44 @@
 
   /* ---------- presenter view (private speaker notes) ---------- */
   const NOTES=[
-    "<p><b>30-second intro.</b> What it does: monitors USCIS cases and <b>notifies status changes in near real-time</b> (WhatsApp / Email / Telegram). Who uses it: applicants + their legal / paralegal staff.</p><p>Keep it brief — USCIS asked for no company pitch.</p>",
-    "<p><b>This is your cockpit.</b> Click a step to expand it; use the <b>Open …</b> buttons to launch the live pages in a new tab; mark <b>✓ Done</b> as you go.</p><p>Navigate with → / dots. The <b>≡ Demo menu</b> opens pages & code from anywhere.</p>",
-    "<p><b>Optional for USCIS.</b> It auto-plays once; then press <b>↻</b> and <b>click to draw each link</b> while you narrate.</p><p>Key line: one USA server, three tiers; <b>the EXECUTOR is the ONLY component that calls USCIS</b> (over OAuth2).</p>",
-    "<p>Reference material starts here — <b>jump in only if USCIS asks</b> a specific question.</p>",
-    "<p><b>Click to step</b> the request: ① browser → ② trackpetition backend (X-Internal-Key) → ③ executor (OAuth2 Bearer) → ◆ USCIS.</p><p>Say: in the Network tab USCIS only ever sees our same-origin <b>/api/case</b> — never the USCIS endpoint — so the OAuth secret stays server-side.</p>",
-    "<p>Show the live console: OAuth token <b>Active</b> (client_id masked), <b>TPS / daily quota</b>, Recent requests <b>audit</b>, and the <b>Live wire</b> JSON (real token POST, masked).</p>",
-    "<p><b>Four auth channels</b>, one module each: JWT (browser↔trackpetition), X-Internal-Key (trackpetition↔executor), OAuth2 Bearer (executor↔USCIS), Google+JWT (ops console).</p>",
-    "<p>Token lifecycle: client-credentials POST → access_token (~30 min, cached) → Bearer on every call → 401 refresh+retry. Secret in env, masked logs, server-side only.</p>",
-    "<p><b>EXPLAIN THE CODE (USCIS requires it). Walk each tab; click a line to open VS Code there.</b></p>"+
-    "<p><b>uscis_client.py — OAuth.</b> “We get the token with client-credentials: <b>Basic base64(client_id:secret)</b> POSTed to the USCIS token endpoint (L80). It’s cached in the DB ~30 min and refreshed proactively, so no live request pays the handshake. Every Case Status call sends <b>Authorization: Bearer</b> (L323); on a 401 we refresh and retry once. We pace every call to the <b>TPS cap</b> (L195) and audit it in <span class=k>requests</span>. The client_id is masked and the secret / full token are <b>never stored or logged</b> (L76).”</p>"+
-    "<p><b>internal_auth.py — X-Internal-Key.</b> “trackpetition never calls USCIS directly. It calls our executor over <span class=k>/api/internal/*</span> with a shared <b>X-Internal-Key</b>, compared in <b>constant time</b> with hmac.compare_digest (L21). Missing key → 503 (fail-closed); wrong key → 401.”</p>"+
-    "<p><b>auth.py — console.</b> “The ops console uses Google Sign-In; we verify the Google ID token, then issue our own <b>HS256 JWT</b> (L103), re-checked on <b>every</b> request (L124). The app <b>refuses to boot</b> if the JWT secret is weak (L40).”</p>"+
-    "<p><b>accounts.py — trackpetition users.</b> “Passwords are <b>PBKDF2-HMAC-SHA256, 200k iterations</b> (L158); sessions are HS256 JWTs verified in constant time (L193). It sends the X-Internal-Key to the executor (L77).”</p>"+
-    "<p><b>Closing line:</b> secrets only in <b>.env</b> (systemd EnvironmentFile), masked logs, constant-time comparisons, fail-closed boot.</p>",
-    "<p>Secrets in <b>.env</b> (systemd), fail-closed boot, masked logs. Encryption <b>in transit</b> (Cloudflare Full strict) <b>and at rest</b> (MySQL 8). <b>Loopback-only</b> — only nginx public. MySQL 8 caching_sha2 + FIPS.</p>",
-    "<p><b>Run the orchestrator manually</b> now (cron outside its schedule is the one allowed exception). Show a <b>success</b> and an <b>error</b> response. Cadence: <b>priority hourly · others daily</b>; notifier every 2 min.</p>"
+    "<p class=cue>Opener · ~30 sec · slide only, then go live</p>"+
+    "<p>“Thanks for your time — I'll keep the intro short. This is <b>TrackPetition</b>, a USCIS case-status monitoring service. It checks a petitioner's status against the official <b>USCIS Case Status API</b> and <b>notifies them in near real-time</b> — by WhatsApp, email or Telegram — the moment a status changes.</p>"+
+    "<p>It's used by immigration applicants and their legal and paralegal staff who are tracking pending petitions. Every check is a <b>live USCIS API call</b> — we don't cache and we don't use mock data. Let me show you, live.”</p>",
+    "<p class=cue>Transition · this slide is your control panel</p>"+
+    "<p>“Here's the plan for the next thirty minutes: a quick architecture overview, then everything live — the frontend, a real case lookup, the browser's Network tab, our backend console, the OAuth and code, simulating error responses, and a batch job run manually. I'll leave time at the end for your questions.”</p>"+
+    "<p class=note>Cockpit: expand a step, use the <b>Open …</b> buttons to launch the live pages, tick <b>✓ Done</b> as you go.</p>",
+    "<p class=cue>Architecture · press ↻ then click to draw each link while you talk</p>"+
+    "<p>“At a high level it's a <b>single server in Ashburn, Virginia</b>, with three tiers and two MySQL 8 databases. Let me trace the path. A user's browser only ever talks to <b>our own site</b>, over HTTPS. Our trackpetition backend proxies that request, server-side, to our executor — api.startup58.</p>"+
+    "<p>And here's the key point: the <b>executor is the only component that ever calls USCIS</b>, over OAuth2. So the browser never touches USCIS directly, and the OAuth secret never leaves the server. The two databases hold our app data, and the USCIS case data plus a full audit log.”</p>",
+    "<p class=cue>Divider</p><p>“That's the overview — now let me show you the real thing.”</p><p class=note>Everything after this is reference — jump back here only if USCIS asks a specific question.</p>",
+    "<p class=cue>Request flow · click to step ①→②→③→◆</p>"+
+    "<p>“Here's one case lookup, end to end — and I'll show this live in a moment. ① The browser sends a GET to our same-origin <span class=k>/api/case</span> — no token, no secret. ② Our backend validates it and forwards it to the executor with a shared internal key. ③ The executor adds the OAuth Bearer token and calls USCIS. On success we return the case status; on an error like a 404 or 422 we pass the USCIS message back <b>verbatim</b>.</p>"+
+    "<p>The point for your review: in the browser's Network tab you'll only ever see our <span class=k>/api/case</span> — <b>never</b> the USCIS endpoint. That's deliberate, so the OAuth secret stays server-side.”</p>",
+    "<p class=cue>Backend console · screen-share api.startup58.com live</p>"+
+    "<p>“This is our backend operations console — the same one we use to run the API. You can see the OAuth token is <b>Active</b>, with the client_id masked. Here's the live <b>TPS</b> counter and the <b>daily quota</b> — those caps are enforced in real time. Down here is the <b>Recent Requests audit</b> — every call, with its status. And this <b>Live wire</b> panel shows the actual token response from USCIS in real time, with the secret never displayed.”</p>",
+    "<p class=cue>Authentication · four layers</p>"+
+    "<p>“Authentication happens at <b>four independent layers</b>, each in its own module. Browser to our API: a signed <b>JWT</b>. Between our two backends: a shared <b>X-Internal-Key</b>, server-to-server only. Executor to USCIS: <b>OAuth 2.0</b> Bearer. And our operator console: <b>Google Sign-In plus our own JWT</b>. I'll show you the code for these next.”</p>",
+    "<p class=cue>OAuth 2.0 · token lifecycle</p>"+
+    "<p>“For OAuth specifically: we POST our client credentials to the USCIS token endpoint, get an access token good for about thirty minutes, cache it, and send it as a <b>Bearer</b> token on every case call. If we ever get a 401 we refresh and retry once, automatically. The Client ID and Secret live <b>only in environment variables</b> on the server — never in code, never in the browser, and they're masked in every log line.”</p>",
+    "<p class=cue>Code · open each tab; click a line to jump in VS Code</p>"+
+    "<p><b>uscis_client.py — OAuth.</b> “This is our USCIS client. We read the Client ID and Secret from environment variables — line 80 — base64-encode them as Basic auth, and POST to the USCIS token endpoint. We cache the token in the database for about thirty minutes and refresh it proactively, so no live request ever pays for the handshake. Every case lookup, line 323, sends <b>Authorization: Bearer</b>; if we get a 401 we refresh and retry once. Before each call we check our local <b>TPS budget</b>, line 195, so we never exceed the rate cap. And notice the client_id is masked and the full token is never logged.”</p>"+
+    "<p><b>internal_auth.py — internal channel.</b> “trackpetition never calls USCIS directly — it calls our executor with a shared <b>X-Internal-Key</b>, which we compare in <b>constant time</b> with hmac.compare_digest, line 21. A missing key returns 503, a wrong key returns 401.”</p>"+
+    "<p><b>auth.py — console.</b> “We verify the Google ID token, then issue our own <b>HS256 JWT</b>, line 103, and we re-check authorization on <b>every</b> request — line 124 — not just at login. The app refuses to even start if the JWT secret is weak.”</p>"+
+    "<p><b>accounts.py — our own users.</b> “Passwords are hashed with <b>PBKDF2-HMAC-SHA256 at 200,000 iterations</b>, line 158; sessions are HS256 JWTs verified in constant time, line 193.”</p>"+
+    "<p><b>Closing line:</b> “The common thread: every secret lives only in the server's environment file, logs are masked, comparisons are constant-time, and the app fails closed.”</p>",
+    "<p class=cue>Security summary</p>"+
+    "<p>“To summarize the security posture: all secrets live in a <b>systemd-protected .env file</b> — never committed, never public. The app <b>fails closed</b> if any key is missing or weak. Traffic is encrypted <b>in transit</b> — Cloudflare Full-Strict TLS — and <b>at rest</b> in MySQL 8. Everything except nginx is bound to localhost, and MySQL 8 uses caching_sha2 with a FIPS handshake.”</p>",
+    "<p class=cue>Batch · run the orchestrator manually now</p>"+
+    "<p>“Finally, our scheduled jobs. An <b>orchestrator</b> refreshes case statuses on a schedule — <b>priority cases hourly, all others daily</b> — and a <b>notifier</b> checks every two minutes to alert users on a status change. I'll <b>run the orchestrator manually</b> right now, so you can see a real batch run, including how it handles both <b>success and error</b> responses.”</p>"+
+    "<p class=note>Then: “That covers everything — happy to take your questions.”</p>"
   ];
-  const PV_CSS="*{margin:0;padding:0;box-sizing:border-box}body{background:#0B0F17;color:#E7EEF8;font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:24px 30px 60px;line-height:1.5}.pv-top{display:flex;justify-content:space-between;font-family:monospace;font-size:13px;color:#8C99AE;margin-bottom:4px}h1{font-size:25px;margin:4px 0 16px;color:#38BDF8;line-height:1.15}#pv-notes p{margin:0 0 12px;font-size:16px}#pv-notes b{color:#fff}.k{font-family:monospace;color:#34D399}.pv-next{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12);font-size:14px;color:#8C99AE}.pv-hint{position:fixed;bottom:12px;left:30px;right:30px;font-size:12px;color:#5C6A82}";
-  let presenterWin=null;
-  function openPresenter(){
-    presenterWin=window.open('','uscis-presenter','width=880,height=980');
-    if(!presenterWin){alert('Allow pop-ups to open the presenter notes window.');return;}
-    presenterWin.document.open();
-    presenterWin.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Presenter notes — USCIS demo</title><style>'+PV_CSS+'</style></head><body><div class="pv-top"><span id="pv-counter"></span><span>Presenter notes — keep private</span></div><h1 id="pv-title"></h1><div id="pv-notes"></div><div class="pv-next" id="pv-next"></div><div class="pv-hint">Keep this window on your screen. In Teams, <b>share only the deck window/tab</b> — not this one.</div></body></html>');
-    presenterWin.document.close();
-    renderPresenter();
-  }
-  function renderPresenter(){
-    if(!presenterWin||presenterWin.closed) return;
-    const d=presenterWin.document; const t=d.getElementById('pv-title'); if(!t) return;
-    const i=cur-1;
-    d.getElementById('pv-counter').textContent='Slide '+cur+' / '+tot;
-    t.textContent=slides[i].dataset.label||('Slide '+cur);
-    d.getElementById('pv-notes').innerHTML=NOTES[i]||'<p style="opacity:.5">(no notes for this slide)</p>';
-    d.getElementById('pv-next').textContent=slides[i+1]?('Next →  '+slides[i+1].dataset.label):'— end —';
+  function renderNotes(pos){
+    pos=Math.max(1,Math.min(tot,pos||1)); renderNotes._last=pos;
+    const i=pos-1;
+    document.getElementById('nv-counter').textContent='Slide '+pos+' / '+tot;
+    document.getElementById('nv-title').textContent=slides[i].dataset.label||('Slide '+pos);
+    document.getElementById('nv-notes').innerHTML=NOTES[i]||'<p style="opacity:.5">(no notes for this slide)</p>';
+    document.getElementById('nv-next').textContent=slides[i+1]?('Next →  '+slides[i+1].dataset.label):'— end of deck —';
   }
 
   /* theme */
@@ -823,7 +847,6 @@
     if(active.id==='s-flow') renderFlow(0);
     if(active.id==='s-arch') timers.push(setTimeout(runArch,100));
     try{localStorage.setItem('uscis-deck-pos',cur);}catch(e){}
-    if(presenterWin && !presenterWin.closed) renderPresenter();
   }
   function next(){const a=slides[cur-1];
     if(a.id==='s-flow'&&flowStep<FLOW_MAX){renderFlow(flowStep+1);return;}
@@ -834,21 +857,30 @@
     if(a.id==='s-arch'&&!archAuto&&archStep>0){renderArch(archStep-1);return;}
     show(cur-1);}
 
-  document.addEventListener('keydown',e=>{
-    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
-    if(e.key==='ArrowLeft'){e.preventDefault();prev();}
-    if(e.key==='Home'){show(1);} if(e.key==='End'){show(tot);}
-  });
-  document.addEventListener('click',e=>{
-    if(menuOpen && !e.target.closest('.menu-wrap')) closeMenu();
-    if(e.target.closest('.nav')||e.target.closest('.replay')||e.target.closest('.theme-toggle')||e.target.closest('.agenda')||e.target.closest('.menu-wrap')||e.target.closest('.code-tabs')||e.target.closest('.code-wrap'))return;
-    next();
-  });
-  window.addEventListener('resize',()=>{if(slides[cur-1]&&slides[cur-1].id==='s-arch')layoutArch();});
-
   let th='dark'; try{th=localStorage.getItem('uscis-deck-theme')||'dark';}catch(e){} applyTheme(th);
-  let start=1; try{const v=+localStorage.getItem('uscis-deck-pos');if(v>=1&&v<=tot)start=v;}catch(e){}
-  show(start);
+
+  const NOTES_MODE = location.hash==='#notes' || location.hash==='#presenter';
+  if(NOTES_MODE){
+    document.body.classList.add('notes-mode');
+    let p=1; try{p=+localStorage.getItem('uscis-deck-pos')||1;}catch(e){}
+    renderNotes(p);
+    window.addEventListener('storage',e=>{ if(e.key==='uscis-deck-pos') renderNotes(+e.newValue); if(e.key==='uscis-deck-theme') applyTheme(e.newValue||'dark'); });
+    setInterval(()=>{ try{const v=+localStorage.getItem('uscis-deck-pos'); if(v&&v!==renderNotes._last) renderNotes(v);}catch(e){} },700);
+  } else {
+    document.addEventListener('keydown',e=>{
+      if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
+      if(e.key==='ArrowLeft'){e.preventDefault();prev();}
+      if(e.key==='Home'){show(1);} if(e.key==='End'){show(tot);}
+    });
+    document.addEventListener('click',e=>{
+      if(menuOpen && !e.target.closest('.menu-wrap')) closeMenu();
+      if(e.target.closest('.nav')||e.target.closest('.replay')||e.target.closest('.theme-toggle')||e.target.closest('.agenda')||e.target.closest('.menu-wrap')||e.target.closest('.code-tabs')||e.target.closest('.code-wrap'))return;
+      next();
+    });
+    window.addEventListener('resize',()=>{if(slides[cur-1]&&slides[cur-1].id==='s-arch')layoutArch();});
+    let start=1; try{const v=+localStorage.getItem('uscis-deck-pos');if(v>=1&&v<=tot)start=v;}catch(e){}
+    show(start);
+  }
 </script>
 </body>
 </html>
