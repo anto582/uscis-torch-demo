@@ -499,7 +499,7 @@
 
   <!-- S5 · CODE (4 critical .py, tabbed) -->
   <section class="slide appendix" data-label="Support · Code">
-    <div class="slide-head"><div class="kicker seq">Implementation · the 4 critical modules</div><h2 class="head seq">Code USCIS asks us to explain</h2></div>
+    <div class="slide-head"><div class="kicker seq">Implementation</div><h2 class="head seq">Code</h2></div>
     <div class="code-tabs seq">
       <button class="ctab on" data-k="uscis" onclick="showCode('uscis')">uscis_client.py</button>
       <button class="ctab" data-k="internal" onclick="showCode('internal')">internal_auth.py</button>
@@ -596,6 +596,7 @@
   <button class="menu-btn" id="menuBtn" onclick="toggleMenu(event)">≡ Demo menu</button>
   <div class="menu-pop" id="menuPop">
     <div class="menu-grp">Navigate</div>
+    <button onclick="openPresenter();closeMenu()">🎤 Presenter view (private notes)</button>
     <button onclick="go('Run-sheet · agenda');closeMenu()">🏠 Back to agenda</button>
     <button onclick="go('◆ Support material');closeMenu()">📑 Support material</button>
     <div class="menu-grp">Open live pages</div>
@@ -634,6 +635,45 @@
     const subs={uscis:'454 lines · OAuth2 → USCIS',internal:'27 lines · X-Internal-Key',auth:'145 lines · Google + HS256 JWT',accounts:'auth section · L47–322 (of 2046)'};
     const fn=document.getElementById('code-fname'); if(fn)fn.textContent=names[key]||'';
     const cs=document.getElementById('code-sub'); if(cs)cs.textContent=subs[key]||'';
+  }
+
+  /* ---------- presenter view (private speaker notes) ---------- */
+  const NOTES=[
+    "<p><b>30-second intro.</b> What it does: monitors USCIS cases and <b>notifies status changes in near real-time</b> (WhatsApp / Email / Telegram). Who uses it: applicants + their legal / paralegal staff.</p><p>Keep it brief — USCIS asked for no company pitch.</p>",
+    "<p><b>This is your cockpit.</b> Click a step to expand it; use the <b>Open …</b> buttons to launch the live pages in a new tab; mark <b>✓ Done</b> as you go.</p><p>Navigate with → / dots. The <b>≡ Demo menu</b> opens pages & code from anywhere.</p>",
+    "<p><b>Optional for USCIS.</b> It auto-plays once; then press <b>↻</b> and <b>click to draw each link</b> while you narrate.</p><p>Key line: one USA server, three tiers; <b>the EXECUTOR is the ONLY component that calls USCIS</b> (over OAuth2).</p>",
+    "<p>Reference material starts here — <b>jump in only if USCIS asks</b> a specific question.</p>",
+    "<p><b>Click to step</b> the request: ① browser → ② trackpetition backend (X-Internal-Key) → ③ executor (OAuth2 Bearer) → ◆ USCIS.</p><p>Say: in the Network tab USCIS only ever sees our same-origin <b>/api/case</b> — never the USCIS endpoint — so the OAuth secret stays server-side.</p>",
+    "<p>Show the live console: OAuth token <b>Active</b> (client_id masked), <b>TPS / daily quota</b>, Recent requests <b>audit</b>, and the <b>Live wire</b> JSON (real token POST, masked).</p>",
+    "<p><b>Four auth channels</b>, one module each: JWT (browser↔trackpetition), X-Internal-Key (trackpetition↔executor), OAuth2 Bearer (executor↔USCIS), Google+JWT (ops console).</p>",
+    "<p>Token lifecycle: client-credentials POST → access_token (~30 min, cached) → Bearer on every call → 401 refresh+retry. Secret in env, masked logs, server-side only.</p>",
+    "<p><b>EXPLAIN THE CODE (USCIS requires it). Walk each tab; click a line to open VS Code there.</b></p>"+
+    "<p><b>uscis_client.py — OAuth.</b> “We get the token with client-credentials: <b>Basic base64(client_id:secret)</b> POSTed to the USCIS token endpoint (L80). It’s cached in the DB ~30 min and refreshed proactively, so no live request pays the handshake. Every Case Status call sends <b>Authorization: Bearer</b> (L323); on a 401 we refresh and retry once. We pace every call to the <b>TPS cap</b> (L195) and audit it in <span class=k>requests</span>. The client_id is masked and the secret / full token are <b>never stored or logged</b> (L76).”</p>"+
+    "<p><b>internal_auth.py — X-Internal-Key.</b> “trackpetition never calls USCIS directly. It calls our executor over <span class=k>/api/internal/*</span> with a shared <b>X-Internal-Key</b>, compared in <b>constant time</b> with hmac.compare_digest (L21). Missing key → 503 (fail-closed); wrong key → 401.”</p>"+
+    "<p><b>auth.py — console.</b> “The ops console uses Google Sign-In; we verify the Google ID token, then issue our own <b>HS256 JWT</b> (L103), re-checked on <b>every</b> request (L124). The app <b>refuses to boot</b> if the JWT secret is weak (L40).”</p>"+
+    "<p><b>accounts.py — trackpetition users.</b> “Passwords are <b>PBKDF2-HMAC-SHA256, 200k iterations</b> (L158); sessions are HS256 JWTs verified in constant time (L193). It sends the X-Internal-Key to the executor (L77).”</p>"+
+    "<p><b>Closing line:</b> secrets only in <b>.env</b> (systemd EnvironmentFile), masked logs, constant-time comparisons, fail-closed boot.</p>",
+    "<p>Secrets in <b>.env</b> (systemd), fail-closed boot, masked logs. Encryption <b>in transit</b> (Cloudflare Full strict) <b>and at rest</b> (MySQL 8). <b>Loopback-only</b> — only nginx public. MySQL 8 caching_sha2 + FIPS.</p>",
+    "<p><b>Run the orchestrator manually</b> now (cron outside its schedule is the one allowed exception). Show a <b>success</b> and an <b>error</b> response. Cadence: <b>priority hourly · others daily</b>; notifier every 2 min.</p>"
+  ];
+  const PV_CSS="*{margin:0;padding:0;box-sizing:border-box}body{background:#0B0F17;color:#E7EEF8;font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:24px 30px 60px;line-height:1.5}.pv-top{display:flex;justify-content:space-between;font-family:monospace;font-size:13px;color:#8C99AE;margin-bottom:4px}h1{font-size:25px;margin:4px 0 16px;color:#38BDF8;line-height:1.15}#pv-notes p{margin:0 0 12px;font-size:16px}#pv-notes b{color:#fff}.k{font-family:monospace;color:#34D399}.pv-next{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12);font-size:14px;color:#8C99AE}.pv-hint{position:fixed;bottom:12px;left:30px;right:30px;font-size:12px;color:#5C6A82}";
+  let presenterWin=null;
+  function openPresenter(){
+    presenterWin=window.open('','uscis-presenter','width=880,height=980');
+    if(!presenterWin){alert('Allow pop-ups to open the presenter notes window.');return;}
+    presenterWin.document.open();
+    presenterWin.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Presenter notes — USCIS demo</title><style>'+PV_CSS+'</style></head><body><div class="pv-top"><span id="pv-counter"></span><span>Presenter notes — keep private</span></div><h1 id="pv-title"></h1><div id="pv-notes"></div><div class="pv-next" id="pv-next"></div><div class="pv-hint">Keep this window on your screen. In Teams, <b>share only the deck window/tab</b> — not this one.</div></body></html>');
+    presenterWin.document.close();
+    renderPresenter();
+  }
+  function renderPresenter(){
+    if(!presenterWin||presenterWin.closed) return;
+    const d=presenterWin.document; const t=d.getElementById('pv-title'); if(!t) return;
+    const i=cur-1;
+    d.getElementById('pv-counter').textContent='Slide '+cur+' / '+tot;
+    t.textContent=slides[i].dataset.label||('Slide '+cur);
+    d.getElementById('pv-notes').innerHTML=NOTES[i]||'<p style="opacity:.5">(no notes for this slide)</p>';
+    d.getElementById('pv-next').textContent=slides[i+1]?('Next →  '+slides[i+1].dataset.label):'— end —';
   }
 
   /* theme */
@@ -783,6 +823,7 @@
     if(active.id==='s-flow') renderFlow(0);
     if(active.id==='s-arch') timers.push(setTimeout(runArch,100));
     try{localStorage.setItem('uscis-deck-pos',cur);}catch(e){}
+    if(presenterWin && !presenterWin.closed) renderPresenter();
   }
   function next(){const a=slides[cur-1];
     if(a.id==='s-flow'&&flowStep<FLOW_MAX){renderFlow(flowStep+1);return;}
