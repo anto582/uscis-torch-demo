@@ -153,6 +153,8 @@
   .step-hint{position:absolute;bottom:clamp(58px,9vh,90px);left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);opacity:.6;font-family:var(--mono)}
   .replay{position:absolute;top:clamp(24px,3vw,46px);right:clamp(28px,4vw,72px);background:var(--soft);border:1px solid var(--border);color:var(--text);font-size:12px;padding:7px 14px;border-radius:999px;cursor:pointer;display:inline-flex;gap:7px;align-items:center;z-index:5}
   .replay:hover{filter:brightness(1.25)}
+  .arch-ctrls{position:absolute;top:clamp(24px,3vw,46px);right:clamp(28px,4vw,72px);display:flex;gap:10px;z-index:5}
+  .arch-ctrls .replay{position:static;top:auto;right:auto}
 
   /* Auth */
   .layers{display:flex;flex-direction:column;gap:clamp(10px,1.5vw,16px);width:100%}
@@ -377,8 +379,10 @@
 
   <!-- 3 · ARCHITECTURE (interactive) -->
   <section class="slide" id="s-arch" data-label="Architecture">
-    <button class="replay" style="left:clamp(28px,4vw,72px);right:auto" onclick="go('Run-sheet · agenda')">← Agenda</button>
-    <button class="replay" onclick="resetArch()">↻ Replay / draw manually</button>
+    <div class="arch-ctrls">
+      <button class="replay" onclick="go('Run-sheet · agenda')">← Agenda</button>
+      <button class="replay" onclick="resetArch()">↻ Replay</button>
+    </div>
     <div class="slide-head"><div class="kicker seq">System Map · optional</div><h2 class="head seq">One server, three tiers, two databases</h2></div>
     <div class="arch2">
       <div class="diagram" id="arch-diagram">
@@ -865,7 +869,7 @@
     });
     document.addEventListener('click',e=>{
       if(menuOpen && !e.target.closest('.menu-wrap')) closeMenu();
-      if(e.target.closest('.nav')||e.target.closest('.replay')||e.target.closest('.theme-toggle')||e.target.closest('.agenda')||e.target.closest('.menu-wrap')||e.target.closest('.code-tabs')||e.target.closest('.code-wrap'))return;
+      if(e.target.closest('.nav')||e.target.closest('.replay')||e.target.closest('.arch-ctrls')||e.target.closest('.theme-toggle')||e.target.closest('.agenda')||e.target.closest('.menu-wrap')||e.target.closest('.code-tabs')||e.target.closest('.code-wrap'))return;
       next();
     });
     window.addEventListener('resize',()=>{if(slides[cur-1]&&slides[cur-1].id==='s-arch')layoutArch();});
