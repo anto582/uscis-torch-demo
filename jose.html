@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Apoyo Jose — Código USCIS</title>
+<style>
+  :root{
+    --bg:#0B0E14; --panel:#121722; --panel2:#0E131C; --border:#222B3A; --soft:#1A2230;
+    --text:#E6ECF5; --muted:#8A98AE; --accent:#5AA2FF; --ok:#34D399; --crit:#F87171;
+    --mono:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:940px;margin:0 auto;padding:26px 20px 80px}
+
+  header h1{font-size:clamp(21px,3vw,29px);margin:0 0 4px;letter-spacing:-.01em}
+  header .sub{color:var(--muted);font-size:14px}
+  .note{margin:14px 0 4px;background:var(--panel2);border:1px solid var(--border);
+    border-left:3px solid var(--accent);border-radius:10px;padding:11px 16px;font-size:13px;color:var(--muted)}
+  .note b{color:var(--text)}
+
+  .bar{position:sticky;top:0;z-index:10;background:rgba(11,14,20,.94);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);margin:16px -20px 22px;padding:12px 20px;
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .search{flex:1;min-width:200px;position:relative}
+  .search input{width:100%;font:inherit;font-size:15px;padding:10px 12px 10px 38px;border-radius:10px;
+    border:1px solid var(--border);background:var(--soft);color:var(--text)}
+  .search input:focus{outline:none;border-color:var(--accent)}
+  .search::before{content:"🔎";position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.6;font-size:14px}
+  .btn{font:inherit;font-size:13px;padding:9px 13px;border-radius:9px;border:1px solid var(--border);
+    background:var(--soft);color:var(--text);cursor:pointer;transition:.15s;white-space:nowrap}
+  .btn:hover{border-color:var(--accent)}
+  .btn.on{background:var(--crit);border-color:var(--crit);color:#1a0d10;font-weight:600}
+  .count{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+  h2.sec{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+    margin:28px 0 12px;font-weight:700}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;
+    padding:15px 18px;margin:0 0 13px}
+  .card.crit{border-color:#3a2330;box-shadow:inset 3px 0 0 var(--crit)}
+  .qhead{display:flex;gap:12px;align-items:flex-start}
+  .qnum{font-family:var(--mono);font-size:12px;color:var(--muted);background:var(--soft);
+    border-radius:6px;padding:3px 8px;white-space:nowrap;margin-top:2px}
+  .crit .qnum{color:var(--crit);border:1px solid var(--crit)}
+  .q{flex:1;font-size:16px;font-weight:600}
+  .q .tag{display:inline-block;font-size:10px;font-family:var(--mono);color:var(--crit);
+    border:1px solid var(--crit);border-radius:6px;padding:1px 6px;margin-left:8px;vertical-align:middle;letter-spacing:.05em}
+
+  .ans{margin-top:11px}
+  .ans .en{font-size:15px}
+  .ans .en b{color:#fff}
+  .ans .es{margin-top:9px;font-size:13px;color:var(--muted);border-top:1px dashed var(--border);padding-top:9px}
+  .ans .es b{color:var(--text)}
+
+  .refs{margin-top:11px;display:flex;flex-wrap:wrap;gap:7px}
+  .refs a,.refs span{font-family:var(--mono);font-size:12px;text-decoration:none;
+    background:var(--panel2);border:1px solid var(--border);border-radius:7px;padding:4px 9px;
+    color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+  .refs a:hover{border-color:var(--accent);color:var(--accent)}
+  .refs .lead{border:none;background:none;padding-left:0;color:var(--muted);opacity:.7}
+
+  code,.mono{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.05);padding:1px 5px;border-radius:5px}
+  .empty{color:var(--muted);text-align:center;padding:40px 0;font-size:14px}
+  footer{margin-top:30px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
+  .hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Apoyo de código — Jose</h1>
+    <div class="sub">Referencia para leer y guiar · Antonio responde · <b style="color:var(--text)">demo 2026-07-01</b></div>
+  </header>
+
+  <div class="note">
+    <b>Para leer, no para mostrar.</b> Esta hoja es el apoyo privado de Jose (conectado en remoto) para
+    seguir cada pregunta y su respuesta. <b>No se comparte en pantalla con USCIS.</b> Las referencias
+    <span class="mono">archivo:línea</span> son del código real del mediador (Startup58) y de TrackPetition.
+  </div>
+
+  <div class="bar">
+    <div class="search"><input id="q" type="search" placeholder="Buscar pregunta, respuesta o archivo…" autocomplete="off"></div>
+    <button class="btn" id="fCrit" onclick="toggleCrit()">🔴 Solo críticas</button>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div id="list"></div>
+
+  <footer>
+    <b>3 críticas</b> (2 · token handling · 8 · el navegador nunca toca USCIS · G · slider TPS): son las que un
+    revisor agudo presiona. Si Antonio duda, la salida es <i>"let me show you in the code"</i> y abrir el archivo.
+    Recordatorio: VS Code abierto en <span class="mono">apioficial-deploy</span> (no <span class="mono">apiofficial</span>); nunca el <span class="mono">.env</span>.
+  </footer>
+</div>
+
+<script>
+  const APIO = "";
+  const TP   = "";
+  const Q = [
+    {sec:"A · OAuth 2.0 + protección del secreto"},
+    {n:"1", q:"Where do you store the Client ID and Secret?",
+      refs:[["uscis_client.py:33", APIO+"uscis_client.py:33"]],
+      en:"Environment variables loaded by systemd <b>EnvironmentFile</b> — never in the repo, never in the browser.",
+      es:'Muestra <code>os.getenv("USCIS_CLIENT_ID")</code>. <b>Nunca el .env</b>; enseña <code>.env.example</code> con placeholders.'},
+    {n:"2", crit:true, q:"Show me the token handling code.",
+      refs:[["uscis_client.py:88 · get_access_token", APIO+"uscis_client.py:88"]],
+      en:"<b>Basic base64(id:secret)</b>, grant_type=client_credentials. The token is cached in MySQL and proactively refreshed ~5 min before expiry.",
+      es:"El <code>base64.b64encode</code> y el <code>save_token</code>. Refresh proactivo: <code>refresh_token_if_due</code> (L169), lo corre el executor."},
+    {n:"3", q:"What if the token expires mid-request?",
+      refs:[["uscis_client.py:380 · rama 401", APIO+"uscis_client.py:380"]],
+      en:"On a 401 mid-flight we <b>force-refresh once</b> and retry as a new audited row — the log shows 401 → refresh → 200.",
+      es:"Es <b>una sola</b> vez."},
+    {n:"4", q:"How do you build the authenticated request?",
+      refs:[["uscis_client.py:193 · _request_headers", APIO+"uscis_client.py:193"]],
+      en:"<b>Authorization: Bearer &lt;token&gt;</b> plus our assigned <b>demo_id</b> header.",
+      es:"<code>demo_id</code> sale de env; el token va enmascarado en la UI / Live wire."},
+
+    {sec:"B · Autenticación front ↔ back"},
+    {n:"5", q:"How does a user authenticate to the console?",
+      refs:[["auth.py:49 · verify_google", APIO+"auth.py:49"],["auth.py:103 · make_token", APIO+"auth.py:103"]],
+      en:"Google verifies identity; our backend issues its own signed <b>HS256 JWT</b>, scoped to the console and checked against ALLOWED_ADMIN_EMAILS.",
+      es:"Firma con <code>SECRET_KEY</code> de env; valida <code>email_verified</code>."},
+    {n:"6", q:"How are privileged endpoints protected?",
+      refs:[["main.py:210 · require_admin", APIO+"main.py:210"]],
+      en:"Live lookups and limit changes are gated by <b>require_admin</b>; everyone else is read-only.",
+      es:"Demo: DevTools → Network → header <code>Authorization: Bearer</code> en <code>/api/auth/me</code>."},
+
+    {sec:"C · Flujo del request / headers / payload"},
+    {n:"7", q:"Walk me through a case lookup end-to-end.",
+      refs:[["main.py:209", APIO+"main.py:209"],["main.py:250 · _queued_lookup", APIO+"main.py:250"]],
+      en:"The web tier <b>enqueues</b>; a <b>single executor</b> is the only thing that calls USCIS; the result returns over Redis pub/sub.",
+      es:"<code>_queued_lookup</code> → <code>bus.enqueue</code> + <code>wait_result</code>."},
+    {n:"8", crit:true, q:"Do end users hit USCIS directly? / Why doesn't the browser call USCIS?",
+      refs:[["(a) accounts.py:705 · proxy", TP+"accounts.py:705"],["(b) main.py:284 · /api/internal/case", APIO+"main.py:284"]],
+      en:"<b>No.</b> The browser only talks to our API. (a) trackpetition same-origin proxy → (b) our internal endpoint with one shared <b>X-Internal-Key</b> → executor → USCIS. Rate-limited and audited; the secret stays on the backend.",
+      es:"Tres rutas distintas: <b>(a)</b> proxy trackpetition <code>public_case_proxy</code>; <b>(b)</b> interno <code>/api/internal/case</code> (X-Internal-Key); <b>(c)</b> admin <code>/api/case</code> (require_admin). El viejo <code>/api/public/case</code> fue <b>eliminado</b> (main.py:268)."},
+    {n:"9", q:"Show a real request/response on the wire.",
+      refs:[["Live wire + Network tab — sin archivo", null]],
+      en:"Live wire (xterm.js) + browser Network tab. <b>Filter by</b> <code>case</code> or <code>auth</code> to isolate the call from the polling noise.",
+      es:"Acción en vivo. El filtro evita el ruido del polling."},
+
+    {sec:"D · TPS y cuota diaria"},
+    {n:"10", q:"How do you guarantee you never exceed the TPS cap?",
+      refs:[["executor.py:168 · pacemaker", APIO+"executor.py:168"]],
+      en:"A <b>single executor</b> releases calls at a fixed cadence below the cap — even-spaced, never bursts. INTERVAL = 1 / (live tps_cap × 0.95).",
+      es:"<b>Un solo</b> proceso. <code>_tps_budget_available</code> es solo <b>fallback</b> para rutas no-executor."},
+    {n:"11", q:"What if you run multiple web workers?",
+      refs:[["executor.py:1 · docstring", APIO+"executor.py:1"]],
+      en:"The web tier <b>never</b> calls USCIS — only the executor does. The TPS holds regardless of web scale.",
+      es:"El cap es por construcción: 1 proceso, no por worker."},
+    {n:"G", crit:true, q:"Does moving the slider change the live rate to USCIS — without a restart? (la trampa)",
+      refs:[["executor.py:52 · _effective_tps", APIO+"executor.py:52"],["db.py:395 · get_config", APIO+"db.py:395"],["main.py:607 · set_config", APIO+"main.py:607"]],
+      en:"<b>Yes.</b> The executor derives its pace from the <b>LIVE tps_cap</b>, read from the config table <b>every cycle</b> (db.get_config = fresh SELECT, no cache). Moving the slider re-paces outbound calls immediately — <b>no restart</b>. Only TPS_SAFETY_FRACTION (0.95) is env-fixed.",
+      es:"Cadena: <code>executor.py:172 → :58 → :55 → db.py:395</code>. El slider escribe <code>tps_cap</code> (main.py:607). <b>NO decir \"en reinicio\"</b> — sub-vende el sistema."},
+    {n:"12", q:"How is the daily quota enforced?",
+      refs:[["executor.py:78 · _daily_target", APIO+"executor.py:78"],["main.py:299", APIO+"main.py:299"]],
+      en:"Usable budget = daily cap − safety margin, checked before each call; the <b>margin is never spent</b>.",
+      es:"Cap y margen son tunables en caliente desde la consola."},
+
+    {sec:"E · Manejo de errores"},
+    {n:"13", q:"What does a malformed receipt return?",
+      refs:[["main.py:212 · 400 local", APIO+"main.py:212"],["main.py:957 · error-test → 422", APIO+"main.py:957"]],
+      en:"<b>400</b> if rejected locally by the regex (saves a USCIS call); <b>422</b> if forwarded to USCIS for the audit. Same input, two intentional paths.",
+      es:"Demo ambos: Error generator → <code>Local → 400</code> y <code>USCIS → 422</code>."},
+    {n:"14", q:"How do you parse a USCIS error?",
+      refs:[["uscis_client.py:278 · _error_fields", APIO+"uscis_client.py:278"]],
+      en:"<b>RFC-9457</b>: {errors:[…]} and the singular {error:{}}; we log the <b>trace_id</b>.",
+      es:"Maneja también el fault de Apigee."},
+    {n:"15", q:"404 / 429 / 5xx?",
+      refs:[["uscis_client.py:415", APIO+"uscis_client.py:415"]],
+      en:"<b>404</b> passes the USCIS body through unchanged; <b>429</b> has no auto-retry on user lookups; <b>5xx/network</b> → structured 502. Every call logged in <code>requests</code> via a finally block.",
+      es:"El finally garantiza la fila de auditoría."},
+
+    {sec:"F · Batch updates"},
+    {n:"16", q:"How often do batch updates run?",
+      refs:[["scheduler.py", APIO+"scheduler.py:1"]],
+      en:"Heartbeat configurable (<b>default 30 min</b>); watch refresh hourly in business hours; error generator once per business hour. Gated to <b>Mon–Fri 7am–8pm ET</b> + daily quota.",
+      es:"La cadencia se ve/edita en la consola."},
+    {n:"17", q:"Run it now.",
+      refs:[["Consola → Execution → Run batch", null]],
+      en:"I'll run it off-schedule now — each line is a <b>real sandbox call</b> with its status, latency and trace ID.",
+      es:"El cron/batch fuera de horario es lo <b>único</b> que USCIS permite correr en el demo."},
+  ];
+
+  const list=document.getElementById("list");
+  const countEl=document.getElementById("count");
+  const TOTAL=Q.filter(x=>!x.sec).length;
+  let critOnly=false, term="";
+
+  function matches(item){
+    if(critOnly && !item.crit) return false;
+    if(!term) return true;
+    const hay=(item.n+" "+item.q+" "+item.en+" "+item.es+" "+item.refs.map(r=>r[0]).join(" ")).toLowerCase();
+    return hay.includes(term);
+  }
+  function render(){
+    list.innerHTML=""; let shown=0;
+    Q.forEach(item=>{
+      if(item.sec){
+        const h=document.createElement("h2"); h.className="sec"; h.dataset.sec="1";
+        h.textContent=item.sec; list.appendChild(h); return;
+      }
+      if(!matches(item)) return;
+      shown++;
+      const refs=item.refs.map(r=> `<span>📄 ${r[0]}</span>`).join("");
+      const card=document.createElement("div");
+      card.className="card"+(item.crit?" crit":"");
+      card.innerHTML=`
+        <div class="qhead">
+          <span class="qnum">${item.n}</span>
+          <div class="q">${item.q}${item.crit?'<span class="tag">CLAVE</span>':''}</div>
+        </div>
+        <div class="ans"><div class="en">${item.en}</div><div class="es">${item.es}</div></div>
+        <div class="refs"><span class="lead">Código:</span>${refs}</div>`;
+      list.appendChild(card);
+    });
+    // hide empty section headers
+    list.querySelectorAll("h2.sec").forEach(h=>{
+      const next=h.nextElementSibling;
+      h.classList.toggle("hide", !next || next.dataset.sec);
+    });
+    if(!shown){ const e=document.createElement("div"); e.className="empty";
+      e.textContent="Sin resultados para “"+term+"”."; list.appendChild(e); }
+    countEl.textContent=shown+" / "+TOTAL;
+  }
+  document.getElementById("q").addEventListener("input",e=>{ term=e.target.value.trim().toLowerCase(); render(); });
+  function toggleCrit(){ critOnly=!critOnly; document.getElementById("fCrit").classList.toggle("on",critOnly); render(); }
+  render();
+</script>
+</body>
+</html>
