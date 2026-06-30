@@ -153,7 +153,7 @@
   .step-hint{position:absolute;bottom:clamp(58px,9vh,90px);left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);opacity:.6;font-family:var(--mono)}
   .replay{position:absolute;top:clamp(24px,3vw,46px);right:clamp(28px,4vw,72px);background:var(--soft);border:1px solid var(--border);color:var(--text);font-size:12px;padding:7px 14px;border-radius:999px;cursor:pointer;display:inline-flex;gap:7px;align-items:center;z-index:5}
   .replay:hover{filter:brightness(1.25)}
-  .arch-ctrls{position:absolute;top:clamp(24px,3vw,46px);right:clamp(28px,4vw,72px);display:flex;gap:10px;z-index:5}
+  .arch-ctrls{position:absolute;top:18px;right:clamp(120px,13vw,164px);display:flex;gap:10px;z-index:5}
   .arch-ctrls .replay{position:static;top:auto;right:auto}
 
   /* Auth */
@@ -267,6 +267,7 @@
   .code-pane{max-height:48vh;overflow:auto;padding:clamp(12px,1.6vw,20px) clamp(14px,1.8vw,24px)}
   .code-pane[hidden]{display:none}
   .cref-head{font-family:var(--mono);font-size:clamp(10px,1.1vw,12.5px);color:#5C6A82;padding:0 0 10px}
+  .cref-sub{font-family:var(--mono);font-size:clamp(9.5px,1vw,11px);letter-spacing:.07em;text-transform:uppercase;color:var(--ours);font-weight:700;margin:13px 0 7px;padding-top:11px;border-top:1px dashed var(--border)}
   .cref{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:baseline;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
   .cref:last-child{border-bottom:0}
   .cref-sig{font-family:var(--mono);font-size:clamp(11px,1.2vw,13.5px);white-space:pre;overflow-x:auto;color:#C9D4E3}
@@ -280,7 +281,7 @@
   /* presenter notes view (separate URL: …/#notes) */
   #notesView{display:none;position:fixed;inset:0;flex-direction:column;padding:clamp(20px,3vw,34px) clamp(24px,4vw,40px) 52px;background:var(--bg);color:var(--text);overflow:auto;z-index:2000}
   body.notes-mode #notesView{display:flex}
-  body.notes-mode .deck,body.notes-mode .nav,body.notes-mode .menu-wrap,body.notes-mode .theme-toggle,body.notes-mode .progress{display:none!important}
+  body.notes-mode .deck,body.notes-mode .nav,body.notes-mode .menu-wrap,body.notes-mode .theme-toggle,body.notes-mode .code-jump,body.notes-mode .progress{display:none!important}
   .nv-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:6px}
   #notesView h1{font-size:clamp(22px,2.7vw,32px);color:var(--ours);margin:4px 0 16px;line-height:1.15}
   #nv-notes p{margin:0 0 13px;font-size:clamp(14px,1.55vw,19px);line-height:1.55}
@@ -303,6 +304,8 @@
   .counter{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;margin-left:4px}
   .hint{position:fixed;bottom:24px;right:22px;color:var(--muted);font-size:11px;z-index:1000;opacity:.55}
   .theme-toggle{position:fixed;bottom:20px;left:22px;z-index:1000;height:36px;padding:0 15px;border-radius:999px;border:1px solid var(--border);background:var(--soft);color:var(--text);cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:.2s}
+  .code-jump{position:fixed;top:18px;right:20px;z-index:1000;height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--border);background:var(--soft);color:var(--text);cursor:pointer;font-size:12.5px;font-weight:600;font-family:var(--mono);display:inline-flex;align-items:center;gap:7px;transition:.2s}
+  .code-jump:hover{border-color:var(--ours);color:var(--ours)}
   .theme-toggle:hover{filter:brightness(1.35);border-color:var(--ours)}
   @media(max-width:768px){.usage,.two-col,.batch{grid-template-columns:1fr}.agenda{grid-auto-flow:row;grid-template-rows:none}
     .flow{flex-wrap:wrap}.conn{flex-basis:100%;flex-direction:row;height:22px}.conn svg{width:60px}}
@@ -348,28 +351,24 @@
         <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://trackpetition.com" target="_blank" rel="noopener">Open trackpetition.com ↗</a><a class="ag-btn" href="https://api.startup58.com" target="_blank" rel="noopener">api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(2,event)">✓ Done</button></div></div>
       </div>
       <div class="ag" data-step="3">
-        <button class="ag-head" onclick="toggleStep(3)"><span class="agn">3</span><span class="ag-req">Network tab</span><span class="agt">~2m</span><span class="ag-chev">▸</span></button>
-        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://trackpetition.com" target="_blank" rel="noopener">Open trackpetition.com ↗</a><button class="ag-btn done" onclick="markDone(3,event)">✓ Done</button></div></div>
+        <button class="ag-head" onclick="toggleStep(3)"><span class="agn">3</span><span class="ag-req">Backend console · api.startup58.com</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(3,event)">✓ Done</button></div></div>
       </div>
       <div class="ag" data-step="4">
-        <button class="ag-head" onclick="toggleStep(4)"><span class="agn">4</span><span class="ag-req">Backend console · api.startup58.com</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
-        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(4,event)">✓ Done</button></div></div>
+        <button class="ag-head" onclick="toggleStep(4)"><span class="agn">4</span><span class="ag-req">OAuth + code</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn" onclick="go('Support · Code')">▸ Show code</button><button class="ag-btn done" onclick="markDone(4,event)">✓ Done</button></div></div>
       </div>
-      <div class="ag" data-step="5">
-        <button class="ag-head" onclick="toggleStep(5)"><span class="agn">5</span><span class="ag-req">OAuth + code</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
-        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn" onclick="go('Support · Code')">▸ Show code</button><button class="ag-btn done" onclick="markDone(5,event)">✓ Done</button></div></div>
+      <div class="ag err" data-step="5">
+        <button class="ag-head" onclick="toggleStep(5)"><span class="agn">5</span><span class="ag-req">Simulate errors</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(5,event)">✓ Done</button></div></div>
       </div>
-      <div class="ag err" data-step="6">
-        <button class="ag-head" onclick="toggleStep(6)"><span class="agn">6</span><span class="ag-req">Simulate errors</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
+      <div class="ag" data-step="6">
+        <button class="ag-head" onclick="toggleStep(6)"><span class="agn">6</span><span class="ag-req">Batch · run manually</span><span class="agt">~3m</span><span class="ag-chev">▸</span></button>
         <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(6,event)">✓ Done</button></div></div>
       </div>
       <div class="ag" data-step="7">
-        <button class="ag-head" onclick="toggleStep(7)"><span class="agn">7</span><span class="ag-req">Batch · run manually</span><span class="agt">~3m</span><span class="ag-chev">▸</span></button>
-        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(7,event)">✓ Done</button></div></div>
-      </div>
-      <div class="ag" data-step="8">
-        <button class="ag-head" onclick="toggleStep(8)"><span class="agn">8</span><span class="ag-req">Questions</span><span class="agt">~5m</span><span class="ag-chev">▸</span></button>
-        <div class="ag-detail"><div class="ag-actions"><button class="ag-btn done" onclick="markDone(8,event)">✓ Done</button></div></div>
+        <button class="ag-head" onclick="toggleStep(7)"><span class="agn">7</span><span class="ag-req">Questions</span><span class="agt">~5m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="ag-actions"><button class="ag-btn done" onclick="markDone(7,event)">✓ Done</button></div></div>
       </div>
     </div>
     <div class="comp-strip seq">
@@ -512,44 +511,47 @@
   <section class="slide appendix" data-label="Support · Code">
     <div class="slide-head"><div class="kicker seq">Implementation</div><h2 class="head seq">Code</h2></div>
     <div class="code-tabs seq">
-      <button class="ctab on" data-k="uscis" onclick="showCode('uscis')">uscis_client.py</button>
-      <button class="ctab" data-k="internal" onclick="showCode('internal')">internal_auth.py</button>
-      <button class="ctab" data-k="auth" onclick="showCode('auth')">auth.py</button>
-      <button class="ctab" data-k="accounts" onclick="showCode('accounts')">accounts.py</button>
+      <button class="ctab on" data-k="backend" onclick="showCode('backend')">Backend</button>
+      <button class="ctab" data-k="frontend" onclick="showCode('frontend')">Frontend</button>
+      <button class="ctab" data-k="tunnel" onclick="showCode('tunnel')">Back + Frontend</button>
     </div>
     <div class="code-wrap seq">
-      <div class="code-bar"><span class="tl" style="background:#FF5F56"></span><span class="tl" style="background:#FFBD2E"></span><span class="tl" style="background:#27C93F"></span><span class="fname" id="code-fname">uscis_client.py</span><span class="code-sub" id="code-sub">454 lines · OAuth2 → USCIS</span></div>
-      <div class="code-pane" id="code-uscis">
-        <div class="cref-head">454 lines · <a class="vsc" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py">open in VS Code ↗</a> · entry points (click a line to jump):</div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">get_access_token</span>(force_refresh=<span class="c-kw">False</span>, trigger=<span class="c-str">'auto'</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:80">L80–182</a><div class="cref-desc">OAuth2 client-credentials: <span class="c-str">Basic</span> base64(id:secret) → access_token; cached in DB (~30 min) + proactive refresh; masked logs · secret &amp; full token never stored.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">lookup_case</span>(receipt, source=<span class="c-str">'user'</span>, skip_tps_gate=<span class="c-kw">False</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:323">L323–453</a><div class="cref-desc">The Case Status call: <span class="c-str">Authorization: Bearer</span>; on 401 → refresh + retry once; TPS gate; RFC 9457 errors surfaced verbatim; audited in <span class="mono-em">requests</span>.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_tps_budget_available</span>(tps_cap):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:195">L195–218</a><div class="cref-desc">Atomic sliding-window TPS limiter (5/s sandbox · 10/s prod) — held by the single executor.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_mask_token</span>(tok):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:76">L76–77</a><div class="cref-desc">Masks the token to a short preview for the audit log; the full token is never persisted.</div></div>
+      <div class="code-bar"><span class="tl" style="background:#FF5F56"></span><span class="tl" style="background:#FFBD2E"></span><span class="tl" style="background:#27C93F"></span><span class="fname" id="code-fname">Backend · api.startup58</span><span class="code-sub" id="code-sub">OAuth · the USCIS call · error handling</span></div>
+
+      <!-- BACKEND · the executor (OAuth + the USCIS call + error handling) -->
+      <div class="code-pane" id="code-backend">
+        <div class="cref-head">api.startup58 · the only tier that talks to USCIS · <a class="vsc" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py">uscis_client.py — open in VS Code ↗</a></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">get_access_token</span>(force_refresh=<span class="c-kw">False</span>, trigger=<span class="c-str">'auto'</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:80">L80–182</a><div class="cref-desc"><b>OAuth 2.0 — token handling.</b> Client id + secret (read from <span class="mono-em">.env</span>) → <span class="c-str">Basic</span> base64 → access_token (~30 min), cached in the DB + refreshed proactively. Secret &amp; full token never stored.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">lookup_case</span>(receipt, source=<span class="c-str">'user'</span>, skip_tps_gate=<span class="c-kw">False</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:323">L323–453</a><div class="cref-desc"><b>The authenticated request.</b> GET to the Case Status API with <span class="c-str">Authorization: Bearer</span> — the single place that calls USCIS.</div></div>
+        <div class="cref-sub">Error handling</div>
+        <div class="cref"><code class="cref-sig"><span class="c-com"># on 401 → refresh the token, retry once (in lookup_case)</span></code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:323">L323–453</a><div class="cref-desc">Token expired mid-call: the 401 is recorded, we refresh and retry once as a new audited row — the log reads <b>401 → refresh → 200</b>.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-com"># USCIS errors (404 · 422 · 5xx) surfaced verbatim — RFC 9457</span></code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:323">L323–453</a><div class="cref-desc">Whatever USCIS returns on an error we pass back to the user <b>exactly as received</b> — no rewriting. Every call is logged in <span class="mono-em">requests</span> (status · time · trace id).</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_tps_budget_available</span>(tps_cap):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:195">L195–218</a><div class="cref-desc">Atomic per-second rate gate (5/s sandbox · 10/s prod). Over the cap → we return <b>429 ourselves</b>, no USCIS call spent.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_mask_token</span>(tok):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:76">L76–77</a><div class="cref-desc">Masks the token to a short preview for the audit log; client id is partly hidden, the full token &amp; secret are <b>never</b> written.</div></div>
       </div>
-      <div class="code-pane" id="code-internal" hidden>
-        <div class="cref-head">27 lines · <a class="vsc" href="vscode://file/E:/Web/apioficial-deploy/backend/internal_auth.py">open in VS Code ↗</a> · the entire module:</div>
-        <div class="cref"><code class="cref-sig">INTERNAL_API_KEY = os.getenv(<span class="c-str">'INTERNAL_API_KEY'</span>, <span class="c-str">''</span>)</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/internal_auth.py:18">L18</a><div class="cref-desc">Shared secret from .env — identical to trackpetition's <span class="mono-em">TP_INTERNAL_API_KEY</span>.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">require_internal_key</span>(x_internal_key=<span class="c-fn">Header</span>(alias=<span class="c-str">'X-Internal-Key'</span>)):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/internal_auth.py:21">L21–26</a><div class="cref-desc">trackpetition → apiofficial gate. <span class="mono-em">hmac.compare_digest</span> (constant-time); 503 if unset (fail-closed) · 401 on mismatch.</div></div>
+
+      <!-- FRONTEND · how users & operators sign in -->
+      <div class="code-pane" id="code-frontend" hidden>
+        <div class="cref-head">trackpetition · how users &amp; operators sign in · <a class="vsc" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py">accounts.py</a> · <a class="vsc" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py">auth.py</a></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">current_user</span>(authorization=<span class="c-fn">Header</span>()):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:642">L642–654</a><div class="cref-desc"><span class="mono-em">accounts.py</span> — <span class="c-str">Bearer</span> JWT dependency → validated user. The public <span class="mono-em">/check</span> needs no login; <span class="mono-em">/account</span> requires this token.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">make_token</span>(user_id, email)  ·  <span class="c-fn">verify_token</span>(token):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:180">L180–204</a><div class="cref-desc"><span class="mono-em">accounts.py</span> — user-session JWT (HS256, <span class="mono-em">hmac.new(…, sha256)</span>); signature checked constant-time + expiry.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">hash_password</span>(password, salt=<span class="c-kw">None</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:158">L158–162</a><div class="cref-desc"><span class="mono-em">accounts.py</span> — PBKDF2-HMAC-SHA256 · 200,000 iterations · random salt. Verify is constant-time (<span class="mono-em">compare_digest</span>).</div></div>
+        <div class="cref-sub">Operator console (admin)</div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">verify_google_credential</span>(credential):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py:49">L49–64</a><div class="cref-desc"><span class="mono-em">auth.py</span> — admin sign-in: verifies the Google ID token + <span class="mono-em">email_verified</span>.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">make_token</span>(…)  ·  <span class="c-fn">require_authenticated</span>(…):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py:103">L103–134</a><div class="cref-desc"><span class="mono-em">auth.py</span> — our own HS256 JWT (12 h); authorization re-checked against the live allow-list on <b>every</b> request.</div></div>
       </div>
-      <div class="code-pane" id="code-auth" hidden>
-        <div class="cref-head">145 lines · <a class="vsc" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py">open in VS Code ↗</a> · operator-console auth (Google + HS256 JWT):</div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">if</span> <span class="c-fn">len</span>(SECRET_KEY) &lt; <span class="c-var">16</span>: <span class="c-kw">raise</span> <span class="c-fn">RuntimeError</span>(…)</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py:40">L40–44</a><div class="cref-desc">Fail-closed boot — refuses to start on a missing / weak JWT secret.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">verify_google_credential</span>(credential):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py:49">L49–64</a><div class="cref-desc">Verifies the Google ID token (google-auth) + email_verified; returns the user's email.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">make_token</span>(email, name=<span class="c-kw">None</span>, picture=<span class="c-kw">None</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py:103">L103–112</a><div class="cref-desc">Issues our own HS256 JWT (<span class="mono-em">SECRET_KEY</span>, 12 h TTL).</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">require_authenticated</span>(creds=<span class="c-fn">Depends</span>(bearer)):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py:124">L124–134</a><div class="cref-desc"><span class="c-str">Bearer</span> JWT; authorization re-checked against the live allow-list on EVERY request.</div></div>
-      </div>
-      <div class="code-pane" id="code-accounts" hidden>
-        <div class="cref-head">auth section · ~L47–322 of a 2046-line server · <a class="vsc" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py">open in VS Code ↗</a>:</div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_internal_headers</span>():</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:77">L77–82</a><div class="cref-desc">Sends <span class="mono-em">X-Internal-Key: INTERNAL_API_KEY</span> on every server→server call to apiofficial.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">hash_password</span>(password, salt=<span class="c-kw">None</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:158">L158–162</a><div class="cref-desc">PBKDF2-HMAC-SHA256 · 200,000 iterations · random 16-byte salt.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">verify_password</span>(password, salt_hex, hash_hex):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:165">L165–169</a><div class="cref-desc"><span class="mono-em">hmac.compare_digest</span> (constant-time) of the derived key.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">make_token</span>(user_id, email):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:180">L180–190</a><div class="cref-desc">HS256 JWT — hand-rolled <span class="mono-em">hmac.new(JWT_SECRET, …, sha256)</span> (<span class="mono-em">TP_JWT_SECRET</span>).</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">verify_token</span>(token):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:193">L193–204</a><div class="cref-desc">Verifies the signature (constant-time) + expiry.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">current_user</span>(authorization=<span class="c-fn">Header</span>()):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:642">L642–654</a><div class="cref-desc"><span class="c-str">Bearer</span> dependency → validated user row from the DB.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">require_admin</span>(user=<span class="c-fn">Depends</span>(current_user)):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:666">L666–671</a><div class="cref-desc"><span class="mono-em">TP_ADMIN_EMAILS</span> allow-list gate (403 otherwise).</div></div>
+
+      <!-- BACK + FRONTEND · the private X-Internal-Key tunnel -->
+      <div class="code-pane" id="code-tunnel" hidden>
+        <div class="cref-head">the private tunnel between the website and the worker — <span class="mono-em">X-Internal-Key</span> · so trackpetition never holds the USCIS secret</div>
+        <div class="cref-sub">Frontend side · trackpetition sends the key</div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_internal_headers</span>():</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:77">L77–82</a><div class="cref-desc"><span class="mono-em">accounts.py</span> — sends <span class="mono-em">X-Internal-Key: INTERNAL_API_KEY</span> on every server→server call to the worker. The browser never sees it.</div></div>
+        <div class="cref-sub">Backend side · the worker checks the key</div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">require_internal_key</span>(x_internal_key=<span class="c-fn">Header</span>(alias=<span class="c-str">'X-Internal-Key'</span>)):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/internal_auth.py:21">L21–26</a><div class="cref-desc"><span class="mono-em">internal_auth.py</span> — verifies it with <span class="mono-em">hmac.compare_digest</span> (constant-time); <b>503</b> if the key is unset (fail-closed) · <b>401</b> on mismatch.</div></div>
+        <div class="cref"><code class="cref-sig">INTERNAL_API_KEY = os.getenv(<span class="c-str">'INTERNAL_API_KEY'</span>, <span class="c-str">''</span>)</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/internal_auth.py:18">L18</a><div class="cref-desc"><span class="mono-em">internal_auth.py</span> — shared secret from <span class="mono-em">.env</span>, identical to trackpetition's <span class="mono-em">TP_INTERNAL_API_KEY</span>. Only the worker holds the USCIS credentials — the public site never does.</div></div>
       </div>
     </div>
-    <p class="code-foot seq">The <b>real, full code</b> is shown live in VS Code during the demo — these are the entry points + line numbers to jump to. Keys live in <b>.env</b> (systemd EnvironmentFile); secrets &amp; full tokens are never stored or logged.</p>
+    <p class="code-foot seq">Three views of one path — <b>Backend</b> (OAuth + the USCIS call + error handling), <b>Frontend</b> (how users &amp; operators sign in), and <b>Back + Frontend</b> (the private <span class="mono-em">X-Internal-Key</span> tunnel). The <b>real, full code</b> is shown live in VS Code — these are the entry points + line numbers to jump to. All keys live in <b>.env</b>; secrets &amp; full tokens are never stored or logged.</p>
   </section>
 
   <!-- S6 · SECURITY -->
@@ -603,6 +605,7 @@
   <span class="counter"><span id="cur">1</span>/<span id="tot">11</span></span>
 </div>
 <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle light / dark theme">☀ Light</button>
+<button class="code-jump" id="codeJumpBtn" onclick="go('Support · Code')" title="Jump to the code slide">‹/› Code</button>
 <div class="menu-wrap">
   <button class="menu-btn" id="menuBtn" onclick="toggleMenu(event)">≡ Demo menu</button>
   <div class="menu-pop" id="menuPop">
@@ -612,11 +615,10 @@
     <div class="menu-grp">Open live pages</div>
     <a href="https://trackpetition.com" target="_blank" rel="noopener" onclick="closeMenu()">↗ trackpetition.com</a>
     <a href="https://api.startup58.com" target="_blank" rel="noopener" onclick="closeMenu()">↗ api.startup58.com (backoffice)</a>
-    <div class="menu-grp">Critical code · .py</div>
-    <button class="mono" onclick="showCode('uscis');closeMenu()">uscis_client.py</button>
-    <button class="mono" onclick="showCode('internal');closeMenu()">internal_auth.py</button>
-    <button class="mono" onclick="showCode('auth');closeMenu()">auth.py</button>
-    <button class="mono" onclick="showCode('accounts');closeMenu()">accounts.py</button>
+    <div class="menu-grp">Code · by section</div>
+    <button class="mono" onclick="showCode('backend');closeMenu()">Backend</button>
+    <button class="mono" onclick="showCode('frontend');closeMenu()">Frontend</button>
+    <button class="mono" onclick="showCode('tunnel');closeMenu()">Back + Frontend</button>
     <div class="menu-grp" style="opacity:.7;font-family:var(--mono);text-transform:none;letter-spacing:0">← → · Space · click · dots</div>
   </div>
 </div>
@@ -649,8 +651,8 @@
     go('Support · Code');
     document.querySelectorAll('.code-pane').forEach(p=>{p.hidden=(p.id!=='code-'+key);});
     document.querySelectorAll('.ctab').forEach(t=>t.classList.toggle('on',t.dataset.k===key));
-    const names={uscis:'uscis_client.py',internal:'internal_auth.py',auth:'auth.py',accounts:'accounts.py'};
-    const subs={uscis:'454 lines · OAuth2 → USCIS',internal:'27 lines · X-Internal-Key',auth:'145 lines · Google + HS256 JWT',accounts:'auth section · L47–322 (of 2046)'};
+    const names={backend:'Backend · api.startup58',frontend:'Frontend · trackpetition + console',tunnel:'Back ↔ Frontend · the tunnel'};
+    const subs={backend:'OAuth · the USCIS call · error handling',frontend:'how users & operators sign in',tunnel:'internal channel · X-Internal-Key'};
     const fn=document.getElementById('code-fname'); if(fn)fn.textContent=names[key]||'';
     const cs=document.getElementById('code-sub'); if(cs)cs.textContent=subs[key]||'';
   }
@@ -676,7 +678,7 @@
     "<p>“We use <b>four separate login checks</b>, each in its own file. Browser to our API: a signed token (JWT). Between our two servers: a shared private key. Worker to USCIS: <b>OAuth 2.0</b>. And our admin page: Google sign-in plus our own token. I will show the code next.”</p>",
     "<p class=cue>OAuth steps</p>"+
     "<p>“For OAuth: we send our client id and secret to the USCIS token address, we get a token that lasts about thirty minutes, we save it, and we send it on every call. If a call returns 401, we get a new token and try once more. The id and secret are kept <b>only in a file on the server</b> — never in the code, never in the browser — and they are hidden in the logs.”</p>",
-    "<p class=cue>Open each tab; click a line to open it in VS Code. Walk the four files:</p>"+
+    "<p class=cue>Open each tab (Backend · Frontend · Back+Frontend); click a line to open it in VS Code:</p>"+
     "<p><b>1) uscis_client.py — talking to USCIS (OAuth + the case call).</b></p>"+
     "<p>“This is the only file that talks to USCIS. First, the credentials. We read the Client ID and Secret from the server's <b>environment file</b> — line 80 — never from the code and never from git, so they are never committed and never in the browser. To get a token we use the OAuth <b>client-credentials</b> flow: we put the id and secret together, base64-encode them as <b>Basic</b> auth, and POST to the USCIS token endpoint. We get back an access token that lasts about thirty minutes, and we <b>save it in the database</b>. A small background job refreshes it a little before it expires, so a real user request never has to wait for the token step — that keeps our response time low and steady.”</p>"+
     "<p>“The actual case lookup is <b>lookup_case</b>, line 323. It builds a GET to the Case Status API and sends the token as <b>Authorization: Bearer</b>. If a call comes back <b>401</b> — the token expired mid-call — we record that 401 in the audit, get a fresh token, and try once more as a new row, so the log shows the true story: 401, refresh, then 200. Any error from USCIS, like 404 or 422, we pass back to the user <b>exactly as USCIS sends it</b> (RFC 9457).”</p>"+
@@ -843,6 +845,7 @@
     slides.forEach((s,i)=>s.classList.toggle('active',i===cur-1));
     dots.forEach((d,i)=>d.classList.toggle('on',i===cur-1));
     const active=slides[cur-1];
+    const cj=document.getElementById('codeJumpBtn'); if(cj) cj.style.display=(active.dataset.label==='Support · Code')?'none':'';
     restart(active);
     document.getElementById('cur').textContent=cur;
     document.getElementById('bar').style.width=(cur/tot*100)+'%';
@@ -877,7 +880,7 @@
     });
     document.addEventListener('click',e=>{
       if(menuOpen && !e.target.closest('.menu-wrap')) closeMenu();
-      if(e.target.closest('.nav')||e.target.closest('.replay')||e.target.closest('.arch-ctrls')||e.target.closest('.theme-toggle')||e.target.closest('.agenda')||e.target.closest('.menu-wrap')||e.target.closest('.code-tabs')||e.target.closest('.code-wrap'))return;
+      if(e.target.closest('.nav')||e.target.closest('.replay')||e.target.closest('.arch-ctrls')||e.target.closest('.theme-toggle')||e.target.closest('.code-jump')||e.target.closest('.agenda')||e.target.closest('.menu-wrap')||e.target.closest('.code-tabs')||e.target.closest('.code-wrap'))return;
       next();
     });
     window.addEventListener('resize',()=>{if(slides[cur-1]&&slides[cur-1].id==='s-arch')layoutArch();});
