@@ -264,15 +264,21 @@
   .ctab:hover{filter:brightness(1.25)}
   .ctab.on{background:rgba(56,189,248,.16);color:var(--ours);border-color:transparent}
   .code-sub{margin-left:auto;font-family:var(--sans);font-size:11px;color:#8C99AE}
-  .code-pane{max-height:48vh;overflow:auto;padding:clamp(12px,1.6vw,20px) clamp(14px,1.8vw,24px)}
+  .code-pane{overflow:hidden;padding:clamp(8px,1.1vw,14px) clamp(14px,1.8vw,22px)}
+  .cref.mini{padding:3px 0}
+  .cref.mini .cref-sig{font-size:clamp(10px,1.05vw,12px);white-space:normal;overflow-x:visible}
+  .cref-grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}
+  @media (max-width:880px){.cref-grid2{grid-template-columns:1fr}}
+  #s-code .slide-head{margin-bottom:clamp(6px,.9vw,11px)}
+  #s-code h2.head{font-size:clamp(20px,2.5vw,32px)}
   .code-pane[hidden]{display:none}
   .cref-head{font-family:var(--mono);font-size:clamp(10px,1.1vw,12.5px);color:#5C6A82;padding:0 0 10px}
-  .cref-sub{font-family:var(--mono);font-size:clamp(9.5px,1vw,11px);letter-spacing:.07em;text-transform:uppercase;color:var(--ours);font-weight:700;margin:13px 0 7px;padding-top:11px;border-top:1px dashed var(--border)}
-  .cref{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:baseline;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+  .cref-sub{font-family:var(--mono);font-size:clamp(9.5px,1vw,11px);letter-spacing:.07em;text-transform:uppercase;color:var(--ours);font-weight:700;margin:8px 0 4px;padding-top:7px;border-top:1px dashed var(--border)}
+  .cref{display:grid;grid-template-columns:1fr auto;gap:3px 12px;align-items:baseline;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06)}
   .cref:last-child{border-bottom:0}
   .cref-sig{font-family:var(--mono);font-size:clamp(11px,1.2vw,13.5px);white-space:pre;overflow-x:auto;color:#C9D4E3}
   .cref-lines{font-family:var(--mono);font-size:clamp(9.5px,1vw,12px);color:#8C99AE;background:rgba(255,255,255,.07);border-radius:6px;padding:2px 8px;white-space:nowrap}
-  .cref-desc{grid-column:1/-1;font-size:clamp(10.5px,1.15vw,13px);color:#8C99AE;line-height:1.42}
+  .cref-desc{grid-column:1/-1;font-size:clamp(10px,1.05vw,12px);color:#8C99AE;line-height:1.34}
   a.cref-lines{text-decoration:none;cursor:pointer;transition:.15s}
   a.cref-lines:hover{background:rgba(56,189,248,.22);color:var(--ours)}
   .vsc{color:#82AAFF;text-decoration:none;cursor:pointer}
@@ -282,7 +288,10 @@
   #notesView{display:none;position:fixed;inset:0;flex-direction:column;padding:clamp(20px,3vw,34px) clamp(24px,4vw,40px) 52px;background:var(--bg);color:var(--text);overflow:auto;z-index:2000}
   body.notes-mode #notesView{display:flex}
   body.notes-mode .deck,body.notes-mode .nav,body.notes-mode .menu-wrap,body.notes-mode .theme-toggle,body.notes-mode .code-jump,body.notes-mode .progress{display:none!important}
-  .nv-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:6px}
+  .nv-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:6px}
+  .nv-nav{display:inline-flex;align-items:center;gap:8px}
+  .nv-nav button{font-family:var(--mono);font-size:14px;width:32px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--soft);color:var(--text);cursor:pointer}
+  .nv-nav button:hover{border-color:var(--ours);color:var(--ours)}
   #notesView h1{font-size:clamp(22px,2.7vw,32px);color:var(--ours);margin:4px 0 16px;line-height:1.15}
   #nv-notes p{margin:0 0 13px;font-size:clamp(14px,1.55vw,19px);line-height:1.55}
   #nv-notes p.cue{font-family:var(--mono);font-size:clamp(11px,1.2vw,13px);color:var(--internal);margin-bottom:4px;letter-spacing:.04em}
@@ -354,17 +363,17 @@
         <button class="ag-head" onclick="toggleStep(3)"><span class="agn">3</span><span class="ag-req">Backend console · api.startup58.com</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
         <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(3,event)">✓ Done</button></div></div>
       </div>
-      <div class="ag" data-step="4">
-        <button class="ag-head" onclick="toggleStep(4)"><span class="agn">4</span><span class="ag-req">OAuth + code</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
-        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn" onclick="go('Support · Code')">▸ Show code</button><button class="ag-btn done" onclick="markDone(4,event)">✓ Done</button></div></div>
+      <div class="ag err" data-step="4">
+        <button class="ag-head" onclick="toggleStep(4)"><span class="agn">4</span><span class="ag-req">Simulate errors</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(4,event)">✓ Done</button></div></div>
       </div>
-      <div class="ag err" data-step="5">
-        <button class="ag-head" onclick="toggleStep(5)"><span class="agn">5</span><span class="ag-req">Simulate errors</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
+      <div class="ag" data-step="5">
+        <button class="ag-head" onclick="toggleStep(5)"><span class="agn">5</span><span class="ag-req">Batch · run manually</span><span class="agt">~3m</span><span class="ag-chev">▸</span></button>
         <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(5,event)">✓ Done</button></div></div>
       </div>
       <div class="ag" data-step="6">
-        <button class="ag-head" onclick="toggleStep(6)"><span class="agn">6</span><span class="ag-req">Batch · run manually</span><span class="agt">~3m</span><span class="ag-chev">▸</span></button>
-        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn done" onclick="markDone(6,event)">✓ Done</button></div></div>
+        <button class="ag-head" onclick="toggleStep(6)"><span class="agn">6</span><span class="ag-req">OAuth + code</span><span class="agt">~4m</span><span class="ag-chev">▸</span></button>
+        <div class="ag-detail"><div class="ag-actions"><a class="ag-btn open" href="https://api.startup58.com" target="_blank" rel="noopener">Open api.startup58.com ↗</a><button class="ag-btn" onclick="go('Support · Code')">▸ Show code</button><button class="ag-btn done" onclick="markDone(6,event)">✓ Done</button></div></div>
       </div>
       <div class="ag" data-step="7">
         <button class="ag-head" onclick="toggleStep(7)"><span class="agn">7</span><span class="ag-req">Questions</span><span class="agt">~5m</span><span class="ag-chev">▸</span></button>
@@ -508,50 +517,70 @@
   </section>
 
   <!-- S5 · CODE (4 critical .py, tabbed) -->
-  <section class="slide appendix" data-label="Support · Code">
-    <div class="slide-head"><div class="kicker seq">Implementation</div><h2 class="head seq">Code</h2></div>
+  <section class="slide appendix" id="s-code" data-label="Support · Code">
+    <div class="slide-head"><div class="kicker seq">Implementation · what USCIS reviews</div><h2 class="head seq">Code</h2></div>
     <div class="code-tabs seq">
       <button class="ctab on" data-k="backend" onclick="showCode('backend')">Backend</button>
       <button class="ctab" data-k="frontend" onclick="showCode('frontend')">Frontend</button>
       <button class="ctab" data-k="tunnel" onclick="showCode('tunnel')">Back + Frontend</button>
     </div>
     <div class="code-wrap seq">
-      <div class="code-bar"><span class="tl" style="background:#FF5F56"></span><span class="tl" style="background:#FFBD2E"></span><span class="tl" style="background:#27C93F"></span><span class="fname" id="code-fname">Backend · api.startup58</span><span class="code-sub" id="code-sub">OAuth · the USCIS call · error handling</span></div>
+      <div class="code-bar"><span class="tl" style="background:#FF5F56"></span><span class="tl" style="background:#FFBD2E"></span><span class="tl" style="background:#27C93F"></span><span class="fname" id="code-fname">Backend · api.startup58</span><span class="code-sub" id="code-sub">OAuth 2.0 · Client ID/Secret · token handling · authenticated request · errors</span></div>
 
       <!-- BACKEND · the executor (OAuth + the USCIS call + error handling) -->
       <div class="code-pane" id="code-backend">
-        <div class="cref-head">api.startup58 · the only tier that talks to USCIS · <a class="vsc" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py">uscis_client.py — open in VS Code ↗</a></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">get_access_token</span>(force_refresh=<span class="c-kw">False</span>, trigger=<span class="c-str">'auto'</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:80">L80–182</a><div class="cref-desc"><b>OAuth 2.0 — token handling.</b> Client id + secret (read from <span class="mono-em">.env</span>) → <span class="c-str">Basic</span> base64 → access_token (~30 min), cached in the DB + refreshed proactively. Secret &amp; full token never stored.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">lookup_case</span>(receipt, source=<span class="c-str">'user'</span>, skip_tps_gate=<span class="c-kw">False</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:323">L323–453</a><div class="cref-desc"><b>The authenticated request.</b> GET to the Case Status API with <span class="c-str">Authorization: Bearer</span> — the single place that calls USCIS.</div></div>
-        <div class="cref-sub">Error handling</div>
-        <div class="cref"><code class="cref-sig"><span class="c-com"># on 401 → refresh the token, retry once (in lookup_case)</span></code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:323">L323–453</a><div class="cref-desc">Token expired mid-call: the 401 is recorded, we refresh and retry once as a new audited row — the log reads <b>401 → refresh → 200</b>.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-com"># USCIS errors (404 · 422 · 5xx) surfaced verbatim — RFC 9457</span></code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:323">L323–453</a><div class="cref-desc">Whatever USCIS returns on an error we pass back to the user <b>exactly as received</b> — no rewriting. Every call is logged in <span class="mono-em">requests</span> (status · time · trace id).</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_tps_budget_available</span>(tps_cap):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:195">L195–218</a><div class="cref-desc">Atomic per-second rate gate (5/s sandbox · 10/s prod). Over the cap → we return <b>429 ourselves</b>, no USCIS call spent.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_mask_token</span>(tok):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:76">L76–77</a><div class="cref-desc">Masks the token to a short preview for the audit log; client id is partly hidden, the full token &amp; secret are <b>never</b> written.</div></div>
+        <div class="cref-head"><b style="color:var(--ours)">USCIS · OAuth 2.0</b> — Client ID/Secret protection · token handling · authenticated request · + full error handling · <a class="vsc" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py">uscis_client.py ↗</a></div>
+        <div class="cref"><code class="cref-sig">CLIENT_ID = os.getenv(<span class="c-str">"USCIS_CLIENT_ID"</span>) · CLIENT_SECRET = os.getenv(…)</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:33">L33–40</a><div class="cref-desc"><b>Secret protection.</b> Client ID &amp; Secret read from the server's <span class="mono-em">.env</span> — never hardcoded, never in git.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">get_access_token</span>(force_refresh=<span class="c-kw">False</span>, trigger=<span class="c-str">'auto'</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:88">L88–159</a><div class="cref-desc"><b>Token handling.</b> <span class="c-str">Basic</span> base64(id:secret) → access_token (~30 min), cached in DB + proactive refresh (L169). Secret &amp; full token never stored.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_request_headers</span>() · <span class="c-kw">def</span> <span class="c-fn">lookup_case</span>(receipt, …):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:193">L193 · 331</a><div class="cref-desc"><b>Authenticated request.</b> Headers <span class="c-str">Authorization: Bearer</span> + <span class="mono-em">demo_id</span>; then <span class="c-str">GET {API_BASE}/{receipt}</span> over HTTPS — the only call to USCIS.</div></div>
+        <div class="cref-sub">Error handling — every response we handle</div>
+        <div class="cref-grid2">
+          <div class="cref mini"><code class="cref-sig"><span class="c-str">200</span> OK → parse + persist status</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:421">L421</a></div>
+          <div class="cref mini"><code class="cref-sig"><span class="c-str">401</span> → refresh token, retry once (audited)</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:380">L380</a></div>
+          <div class="cref mini"><code class="cref-sig"><span class="c-str">404·422·400·403·409</span> → verbatim (RFC 9457)</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:415">L415</a></div>
+          <div class="cref mini"><code class="cref-sig"><span class="c-str">429</span> → local TPS gate, no USCIS call</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:343">L343</a></div>
+          <div class="cref mini"><code class="cref-sig"><span class="c-str">200</span> + invalid JSON → repaired</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:236">L236</a></div>
+          <div class="cref mini"><code class="cref-sig">network / timeout → 502 envelope, retry once</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:454">L454</a></div>
+        </div>
+        <div class="cref-sub">Rate limit &amp; masking</div>
+        <div class="cref-grid2">
+          <div class="cref mini"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_tps_budget_available</span>(tps_cap) <span class="c-com"># 5/s·10/s → 429</span></code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:212">L212–226</a></div>
+          <div class="cref mini"><code class="cref-sig"><span class="c-fn">_error_fields</span>(body) · <span class="c-fn">_mask_token</span>(tok) <span class="c-com"># masked logs</span></code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/uscis_client.py:278">L278 · 76</a></div>
+        </div>
       </div>
 
       <!-- FRONTEND · how users & operators sign in -->
       <div class="code-pane" id="code-frontend" hidden>
-        <div class="cref-head">trackpetition · how users &amp; operators sign in · <a class="vsc" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py">accounts.py</a> · <a class="vsc" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py">auth.py</a></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">current_user</span>(authorization=<span class="c-fn">Header</span>()):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:642">L642–654</a><div class="cref-desc"><span class="mono-em">accounts.py</span> — <span class="c-str">Bearer</span> JWT dependency → validated user. The public <span class="mono-em">/check</span> needs no login; <span class="mono-em">/account</span> requires this token.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">make_token</span>(user_id, email)  ·  <span class="c-fn">verify_token</span>(token):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:180">L180–204</a><div class="cref-desc"><span class="mono-em">accounts.py</span> — user-session JWT (HS256, <span class="mono-em">hmac.new(…, sha256)</span>); signature checked constant-time + expiry.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">hash_password</span>(password, salt=<span class="c-kw">None</span>):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:158">L158–162</a><div class="cref-desc"><span class="mono-em">accounts.py</span> — PBKDF2-HMAC-SHA256 · 200,000 iterations · random salt. Verify is constant-time (<span class="mono-em">compare_digest</span>).</div></div>
-        <div class="cref-sub">Operator console (admin)</div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">verify_google_credential</span>(credential):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py:49">L49–64</a><div class="cref-desc"><span class="mono-em">auth.py</span> — admin sign-in: verifies the Google ID token + <span class="mono-em">email_verified</span>.</div></div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">make_token</span>(…)  ·  <span class="c-fn">require_authenticated</span>(…):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py:103">L103–134</a><div class="cref-desc"><span class="mono-em">auth.py</span> — our own HS256 JWT (12 h); authorization re-checked against the live allow-list on <b>every</b> request.</div></div>
+        <div class="cref-head"><b style="color:var(--ours)">USCIS · Authentication (frontend ↔ backend)</b> — the browser side: request flow + user sign-in · <a class="vsc" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py">accounts.py ↗</a></div>
+        <div class="cref-sub">Request flow — browser → our server (same origin)</div>
+        <div class="cref"><code class="cref-sig"><span class="c-fn">@app.get</span>(<span class="c-str">"/api/case/{receipt}"</span>) · <span class="c-kw">def</span> <span class="c-fn">public_case_proxy</span>(…):</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:705">L705–735</a><div class="cref-desc">The <span class="mono-em">/check</span> page calls THIS same-origin endpoint; we relay to the worker and pass the status/body through (200·404·429·503). The browser never touches USCIS.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-fn">app.add_middleware</span>(<span class="c-fn">CORSMiddleware</span>, allow_origins=TRUSTED_ORIGINS, …)</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:599">L599–606</a><div class="cref-desc">Only our own origins may call the API from a browser; allowed headers: <span class="mono-em">Content-Type · Authorization</span>.</div></div>
+        <div class="cref-sub">User sign-in — JWT (browser ↔ our API)</div>
+        <div class="cref-grid2">
+          <div class="cref mini"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">make_token</span>(user_id, email) <span class="c-com"># HS256</span></code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:180">L180–190</a></div>
+          <div class="cref mini"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">verify_token</span>(token) <span class="c-com"># sig+exp</span></code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:193">L193–204</a></div>
+          <div class="cref mini"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">current_user</span>(authorization=<span class="c-fn">Header</span>())</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:642">L642–654</a></div>
+          <div class="cref mini"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">hash_password</span>(…) <span class="c-com"># PBKDF2 200k</span></code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:158">L158–169</a></div>
+        </div>
+        <div class="cref-desc" style="padding-top:6px">Session JWT signed with <span class="mono-em">TP_JWT_SECRET</span> (.env, fail-closed L54); signature + expiry checked constant-time. <span class="mono-em">/account</span> needs it; the public checker does not.</div>
+        <div class="cref-sub">Operator console (admin sign-in) · auth.py</div>
+        <div class="cref-grid2">
+          <div class="cref mini"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">verify_google_credential</span>(credential)</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py:49">L49–64</a></div>
+          <div class="cref mini"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">require_authenticated</span>(creds) <span class="c-com"># every req</span></code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/auth.py:124">L124–134</a></div>
+        </div>
       </div>
 
       <!-- BACK + FRONTEND · the private X-Internal-Key tunnel -->
       <div class="code-pane" id="code-tunnel" hidden>
-        <div class="cref-head">the private tunnel between the website and the worker — <span class="mono-em">X-Internal-Key</span> · so trackpetition never holds the USCIS secret</div>
+        <div class="cref-head"><b style="color:var(--ours)">USCIS · Authentication (frontend ↔ backend)</b> — the server-to-server channel · <span class="mono-em">X-Internal-Key</span> · so trackpetition never holds the USCIS secret</div>
         <div class="cref-sub">Frontend side · trackpetition sends the key</div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_internal_headers</span>():</code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:77">L77–82</a><div class="cref-desc"><span class="mono-em">accounts.py</span> — sends <span class="mono-em">X-Internal-Key: INTERNAL_API_KEY</span> on every server→server call to the worker. The browser never sees it.</div></div>
-        <div class="cref-sub">Backend side · the worker checks the key</div>
-        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">require_internal_key</span>(x_internal_key=<span class="c-fn">Header</span>(alias=<span class="c-str">'X-Internal-Key'</span>)):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/internal_auth.py:21">L21–26</a><div class="cref-desc"><span class="mono-em">internal_auth.py</span> — verifies it with <span class="mono-em">hmac.compare_digest</span> (constant-time); <b>503</b> if the key is unset (fail-closed) · <b>401</b> on mismatch.</div></div>
-        <div class="cref"><code class="cref-sig">INTERNAL_API_KEY = os.getenv(<span class="c-str">'INTERNAL_API_KEY'</span>, <span class="c-str">''</span>)</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/internal_auth.py:18">L18</a><div class="cref-desc"><span class="mono-em">internal_auth.py</span> — shared secret from <span class="mono-em">.env</span>, identical to trackpetition's <span class="mono-em">TP_INTERNAL_API_KEY</span>. Only the worker holds the USCIS credentials — the public site never does.</div></div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">_internal_headers</span>():  <span class="c-com"># X-Internal-Key: INTERNAL_API_KEY</span></code><a class="cref-lines" href="vscode://file/E:/Web/trackpetition-site/server/accounts.py:77">accounts.py L77–82</a><div class="cref-desc">Sent on every server→server call (<span class="mono-em">TP_INTERNAL_API_KEY</span> from .env, fail-closed L69). trackpetition <b>never</b> calls the public USCIS endpoint.</div></div>
+        <div class="cref-sub">Backend side · the worker verifies the key</div>
+        <div class="cref"><code class="cref-sig"><span class="c-kw">def</span> <span class="c-fn">require_internal_key</span>(x_internal_key=<span class="c-fn">Header</span>(alias=<span class="c-str">'X-Internal-Key'</span>)):</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/internal_auth.py:21">internal_auth.py L21–26</a><div class="cref-desc"><span class="mono-em">hmac.compare_digest</span> (constant-time); <b>503</b> if unset or &lt; 16 chars (fail-closed) · <b>401</b> on mismatch.</div></div>
+        <div class="cref"><code class="cref-sig">INTERNAL_API_KEY = os.getenv(<span class="c-str">'INTERNAL_API_KEY'</span>, <span class="c-str">''</span>)</code><a class="cref-lines" href="vscode://file/E:/Web/apioficial-deploy/backend/internal_auth.py:18">internal_auth.py L18</a><div class="cref-desc">Shared secret from <span class="mono-em">.env</span>, identical on both servers. Only the worker holds the USCIS credentials.</div></div>
       </div>
     </div>
-    <p class="code-foot seq">Three views of one path — <b>Backend</b> (OAuth + the USCIS call + error handling), <b>Frontend</b> (how users &amp; operators sign in), and <b>Back + Frontend</b> (the private <span class="mono-em">X-Internal-Key</span> tunnel). The <b>real, full code</b> is shown live in VS Code — these are the entry points + line numbers to jump to. All keys live in <b>.env</b>; secrets &amp; full tokens are never stored or logged.</p>
+    <p class="code-foot seq">Each tab maps to what USCIS reviews — <b>Backend</b>: OAuth 2.0 (Client ID/Secret protection · token handling · authenticated request) + error handling; <b>Frontend</b> + <b>Back + Frontend</b>: authentication between frontend &amp; backend (browser JWT + the <span class="mono-em">X-Internal-Key</span> channel). The <b>real, full code</b> is shown live in VS Code — these are the entry points + lines. All keys live in <b>.env</b>; secrets &amp; full tokens are never stored or logged.</p>
   </section>
 
   <!-- S6 · SECURITY -->
@@ -624,11 +653,11 @@
 </div>
 
 <div id="notesView">
-  <div class="nv-top"><span id="nv-counter"></span><span>Presenter notes · PRIVATE — do not share this window</span></div>
+  <div class="nv-top"><span class="nv-nav"><button id="nv-prev" title="Previous (←)">←</button><button id="nv-fwd" title="Next (→)">→</button><span id="nv-counter"></span></span><span><b style="color:var(--danger)">PRIVATE — do not share this window</b></span></div>
   <h1 id="nv-title"></h1>
   <div id="nv-notes"></div>
   <div class="nv-next" id="nv-next"></div>
-  <div class="nv-hint">This view lives at a separate URL (…/#notes) and follows the deck automatically. In Teams, share only the deck window — never this one.</div>
+  <div class="nv-hint">Use <b>← →</b> (or the buttons) to move through your script. It also follows the deck automatically when the deck window is open. In Teams, share only the deck window — never this one.</div>
 </div>
 
 <script>
@@ -652,7 +681,7 @@
     document.querySelectorAll('.code-pane').forEach(p=>{p.hidden=(p.id!=='code-'+key);});
     document.querySelectorAll('.ctab').forEach(t=>t.classList.toggle('on',t.dataset.k===key));
     const names={backend:'Backend · api.startup58',frontend:'Frontend · trackpetition + console',tunnel:'Back ↔ Frontend · the tunnel'};
-    const subs={backend:'OAuth · the USCIS call · error handling',frontend:'how users & operators sign in',tunnel:'internal channel · X-Internal-Key'};
+    const subs={backend:'OAuth 2.0 · Client ID/Secret · token handling · authenticated request · errors',frontend:'auth front↔back · request flow · user sign-in',tunnel:'auth front↔back · X-Internal-Key channel'};
     const fn=document.getElementById('code-fname'); if(fn)fn.textContent=names[key]||'';
     const cs=document.getElementById('code-sub'); if(cs)cs.textContent=subs[key]||'';
   }
@@ -678,18 +707,16 @@
     "<p>“We use <b>four separate login checks</b>, each in its own file. Browser to our API: a signed token (JWT). Between our two servers: a shared private key. Worker to USCIS: <b>OAuth 2.0</b>. And our admin page: Google sign-in plus our own token. I will show the code next.”</p>",
     "<p class=cue>OAuth steps</p>"+
     "<p>“For OAuth: we send our client id and secret to the USCIS token address, we get a token that lasts about thirty minutes, we save it, and we send it on every call. If a call returns 401, we get a new token and try once more. The id and secret are kept <b>only in a file on the server</b> — never in the code, never in the browser — and they are hidden in the logs.”</p>",
-    "<p class=cue>Open each tab (Backend · Frontend · Back+Frontend); click a line to open it in VS Code:</p>"+
-    "<p><b>1) uscis_client.py — talking to USCIS (OAuth + the case call).</b></p>"+
-    "<p>“This is the only file that talks to USCIS. First, the credentials. We read the Client ID and Secret from the server's <b>environment file</b> — line 80 — never from the code and never from git, so they are never committed and never in the browser. To get a token we use the OAuth <b>client-credentials</b> flow: we put the id and secret together, base64-encode them as <b>Basic</b> auth, and POST to the USCIS token endpoint. We get back an access token that lasts about thirty minutes, and we <b>save it in the database</b>. A small background job refreshes it a little before it expires, so a real user request never has to wait for the token step — that keeps our response time low and steady.”</p>"+
-    "<p>“The actual case lookup is <b>lookup_case</b>, line 323. It builds a GET to the Case Status API and sends the token as <b>Authorization: Bearer</b>. If a call comes back <b>401</b> — the token expired mid-call — we record that 401 in the audit, get a fresh token, and try once more as a new row, so the log shows the true story: 401, refresh, then 200. Any error from USCIS, like 404 or 422, we pass back to the user <b>exactly as USCIS sends it</b> (RFC 9457).”</p>"+
-    "<p>“Two more points you can show. The <b>rate limiter</b>, line 195: before every call we atomically check and reserve a slot in a one-second window, so we can never go over the cap — five per second in sandbox, ten in production — and if we would go over, we return 429 ourselves without spending a USCIS call. And <b>masking</b>: the client id is shown only partly, the token is saved only as a short preview, and the full token and the secret are <b>never written to the logs</b>. Every call is recorded in the requests table with its status, time, and trace id.”</p>"+
-    "<p><b>2) internal_auth.py — the internal key (why the website never holds the secret).</b></p>"+
-    "<p>“This part is important for security. Our public website, trackpetition, <b>never calls USCIS and never holds the OAuth secret</b>. Instead it calls this server's internal endpoints. We protect that channel with a shared key. INTERNAL_API_KEY comes from the environment — line 18 — and it is the same value on both servers. The check is <b>require_internal_key</b>, line 21: we compare the header to our key with <b>hmac.compare_digest</b>, which is constant-time, so it can't be guessed by timing. And it is <b>fail-closed</b>: if the key isn't set it returns 503; if the key is wrong it returns 401. So the internal channel simply does not work until it is set up correctly.”</p>"+
-    "<p><b>3) auth.py — login for our operator console.</b></p>"+
-    "<p>“The console we use to run the API is protected too. First, line 40: the app <b>refuses to even start</b> if the signing secret is missing, too short, or the default — so nobody can forge an admin token. Login uses <b>Google Sign-In</b>: the browser gets a Google token, and verify_google_credential, line 49, checks it with Google's library and confirms the email is verified. Then we issue <b>our own</b> token, line 103, a signed JWT for the console. And the key point — require_authenticated, line 124 — on <b>every single request</b> we don't just check the token, we re-check the email against the live allow-list. So if we remove an operator it takes effect right away; a valid token by itself is never enough.”</p>"+
-    "<p><b>4) accounts.py — login for our own users.</b></p>"+
-    "<p>“For our end users the same ideas apply. Passwords are hashed with <b>PBKDF2-HMAC-SHA256, two hundred thousand rounds</b> and a random salt — line 158 — which is slow on purpose to resist brute force, and we compare in constant time. Sessions are signed JWTs, checked by signature and expiry in constant time — lines 180 and 193. And when this server needs the worker, it sends the same <b>X-Internal-Key</b> — line 77.”</p>"+
-    "<p><b>Closing line:</b> “So the pattern is the same in every file: secrets live only in the server's environment, the logs hide them, every comparison is constant-time, the app fails closed if anything is misconfigured, and every USCIS call is recorded.”</p>",
+    "<p class=cue>Code — open each tab; each maps to a USCIS requirement. Click any line to open the real file in VS Code.</p>"+
+    "<p><b>Tab 1 · Backend — USCIS: OAuth 2.0.</b></p>"+
+    "<p>“This is the file that talks to USCIS. First, <b>protecting the Client ID and Secret</b> — line 33: we read them from the server's environment file, never from the code and never from git. To get a token we use the OAuth <b>client-credentials</b> flow — get_access_token, line 88: we base64 the id and secret as Basic auth, POST to the USCIS token endpoint, get a token good for about thirty minutes, and save it. A background job refreshes it early, so a real request never waits.”</p>"+
+    "<p>“The <b>authenticated request</b>: _request_headers, line 193, builds the headers — Authorization Bearer plus the USCIS demo_id — and lookup_case, line 331, sends the GET over HTTPS. That is the only call to USCIS.”</p>"+
+    "<p>“<b>Error handling</b> — walk the list: a 200 we parse and save; a 401 we refresh and retry once, audited, so the log reads 401 → refresh → 200; 404, 422 and the rest we pass back <b>exactly as USCIS sends them</b> (RFC 9457); over our own rate limit we return 429 ourselves without calling USCIS; a broken 200 from USCIS we repair. Everything is logged, and the token and secret are always masked.”</p>"+
+    "<p><b>Tab 2 · Frontend — USCIS: authentication between frontend and backend (the browser side).</b></p>"+
+    "<p>“This is what the browser does. The /check page calls <b>our own address</b>, /api/case — line 705 — and our server relays it to the worker; the browser never touches USCIS. CORS, line 599, only lets our own sites call the API. Our users sign in with a signed token, a JWT — make_token line 180, verify_token line 193 — checked by signature and expiry in constant time, and passwords are hashed with PBKDF2, two hundred thousand rounds (line 158). Our operator console adds Google Sign-In and re-checks the allow-list on every request (auth.py, lines 49 and 124).”</p>"+
+    "<p><b>Tab 3 · Back + Frontend — USCIS: authentication between frontend and backend (the server-to-server side).</b></p>"+
+    "<p>“This is the key security point. Our public website <b>never calls USCIS and never holds the secret</b>. When it needs the worker it sends a shared private key — X-Internal-Key — _internal_headers, line 77. The worker checks it with a constant-time compare — require_internal_key, line 21 — and fails closed: 503 if the key is not set, 401 if it is wrong. So only the worker holds the USCIS credentials.”</p>"+
+    "<p><b>Closing:</b> “The pattern is the same everywhere: secrets live only in the server's environment, the logs hide them, comparisons are constant-time, the app fails closed if anything is misconfigured, and every USCIS call is recorded.”</p>",
     "<p class=cue>Security summary</p>"+
     "<p>“Quick summary of security. All secrets are in a <b>protected file on the server</b> — never shared, never public. The app <b>does not start</b> if a key is missing or weak. Traffic is encrypted on the way (TLS) and <b>also when stored</b> (MySQL 8). Only the web server is public; everything else stays private on the machine.”</p>",
     "<p class=cue>Run the batch by hand now</p>"+
@@ -870,6 +897,15 @@
     document.body.classList.add('notes-mode');
     let p=1; try{p=+localStorage.getItem('uscis-deck-pos')||1;}catch(e){}
     renderNotes(p);
+    const notesGo=(n)=>{ n=Math.max(1,Math.min(tot,n||1)); renderNotes(n); try{localStorage.setItem('uscis-deck-pos',n);}catch(e){} };
+    document.addEventListener('keydown',e=>{
+      if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();notesGo((renderNotes._last||1)+1);}
+      else if(e.key==='ArrowLeft'){e.preventDefault();notesGo((renderNotes._last||1)-1);}
+      else if(e.key==='Home'){notesGo(1);} else if(e.key==='End'){notesGo(tot);}
+    });
+    const _pv=document.getElementById('nv-prev'), _fw=document.getElementById('nv-fwd');
+    if(_pv)_pv.onclick=()=>notesGo((renderNotes._last||1)-1);
+    if(_fw)_fw.onclick=()=>notesGo((renderNotes._last||1)+1);
     window.addEventListener('storage',e=>{ if(e.key==='uscis-deck-pos') renderNotes(+e.newValue); if(e.key==='uscis-deck-theme') applyTheme(e.newValue||'dark'); });
     setInterval(()=>{ try{const v=+localStorage.getItem('uscis-deck-pos'); if(v&&v!==renderNotes._last) renderNotes(v);}catch(e){} },700);
   } else {
